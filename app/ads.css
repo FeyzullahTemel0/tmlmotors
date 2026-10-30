@@ -1,0 +1,73 @@
+/* Sponsorlu reklam alanları (herkese açık site) */
+.ad-band { padding-block: 32px; }
+.ad-band:empty { display: none; }
+.ad-inline { margin-top: 36px; }
+.ad-inline:empty { display: none; }
+.ad-band-footer { padding-top: 48px; padding-bottom: 56px; }
+.listing-section .ad-slot-row { margin-bottom: 32px; }
+.ad-slot { width: 100%; animation: ad-in .35s ease both; }
+@keyframes ad-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .ad-slot { animation: none; } }
+.ad-slot a { display: block; color: inherit; text-decoration: none; }
+
+/* Yatay reklamlar: 1 reklam tam genişlik, 2-4 reklam eşit genişlikte yan yana */
+.ad-grid-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.ad-grid-row[data-count="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.ad-grid-row[data-count="3"] { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.ad-grid-row[data-count="4"] { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.ad-grid-row a, .ad-grid-row .ad-creative { height: 100%; }
+.ad-grid-row[data-count="3"] .ad-creative-description, .ad-grid-row[data-count="4"] .ad-creative-description { display: none; }
+.ad-grid-row[data-count="3"] .ad-creative-copy, .ad-grid-row[data-count="4"] .ad-creative-copy { padding-right: 40px; }
+.ad-grid-row[data-count="4"] .ad-creative-copy b { font-size: 16px; }
+@media (max-width: 900px) {
+  .ad-grid-row[data-count="3"], .ad-grid-row[data-count="4"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .ad-grid-row[data-count="3"] > a:last-child { grid-column: 1 / -1; }
+}
+@media (max-width: 560px) {
+  .ad-grid-row[data-count="2"] { grid-template-columns: minmax(0, 1fr); }
+  .ad-grid-row[data-count] { gap: 10px; }
+  .ad-grid-row[data-count="3"] .ad-creative-copy, .ad-grid-row[data-count="4"] .ad-creative-copy { padding: 10px 28px 10px 12px; }
+  .ad-grid-row[data-count="3"] .ad-creative-copy b, .ad-grid-row[data-count="4"] .ad-creative-copy b { font-size: 14px; }
+  .ad-band { padding-block: 28px; }
+  .ad-band-footer { padding-top: 44px; padding-bottom: 48px; }
+}
+.ad-slot a:focus-visible { outline: 3px solid rgba(189,154,104,.6); outline-offset: 3px; border-radius: 14px; }
+
+.ad-creative { position: relative; display: flex; width: 100%; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; color: #1b1b19; background: #fff; box-shadow: var(--shadow-sm); transition: box-shadow .25s ease, transform .25s ease; }
+.ad-slot a:hover .ad-creative { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.ad-creative.has-image { isolation: isolate; border: 1px solid var(--line); background: #ecebe6; }
+.ad-creative.has-image::before { content: ""; position: absolute; inset: -24px; z-index: -1; background: var(--ad-img) center / cover; filter: blur(22px) saturate(1.15); transform: scale(1.05); opacity: .85; }
+.ad-creative.has-image img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.ad-creative-tag { position: absolute; top: 8px; right: 8px; padding: 2px 9px; border-radius: 999px; color: #fff; background: rgba(20,20,18,.62); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; backdrop-filter: blur(4px); }
+.ad-creative-copy { position: relative; display: flex; flex: 1; min-width: 0; flex-direction: column; justify-content: center; gap: 4px; padding: 18px 56px 18px 22px; background: linear-gradient(115deg, #fff, #f7f1e5); }
+.ad-creative-copy > svg { position: absolute; right: 20px; bottom: 18px; color: var(--gold-dark); }
+.ad-creative-business { color: var(--gold-dark); font-size: 12px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.ad-creative-copy b { font-size: 18px; line-height: 1.3; }
+.ad-creative-description { color: #5f625d; font-size: 14px; line-height: 1.55; }
+.ad-shape-wide:not(.has-image) { min-height: 96px; }
+.ad-shape-strip:not(.has-image) { min-height: 64px; }
+.ad-shape-strip .ad-creative-copy { padding-block: 10px; }
+.ad-shape-strip .ad-creative-description { display: none; }
+.ad-shape-tall { max-width: 240px; }
+.ad-shape-tall:not(.has-image) { aspect-ratio: 1 / 2; max-height: 480px; }
+.ad-shape-tall .ad-creative-copy { justify-content: flex-end; padding: 20px 20px 52px; background: linear-gradient(180deg, #f7f1e5, #e9dcc3); }
+.ad-shape-tall .ad-creative-copy b { font-size: 20px; }
+
+/* Dikey reklamların yan alanı */
+.listing-with-aside, .article-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
+.listing-aside, .article-aside { display: none; }
+.vehicle-detail-copy .ad-slot { max-width: 240px; margin-top: 22px; }
+.vehicle-detail-copy:has(.ad-slot) { position: static; }
+@media (min-width: 1280px) {
+  .listing-with-aside { grid-template-columns: minmax(0, 1fr) 240px; }
+  .article-grid { grid-template-columns: minmax(0, 860px) 240px; justify-content: center; gap: 48px; }
+  .listing-aside, .article-aside { display: block; }
+  .listing-aside .ad-slot, .article-aside .ad-slot { position: sticky; top: 130px; }
+}
+/* Telefonda ince bannerlar okunmaz hâle gelmesin diye alan yüksekliği korunur, görsel sığdırılır */
+@media (max-width: 680px) {
+  .ad-creative-copy { padding: 12px 40px 12px 14px; }
+  .ad-creative-copy b { font-size: 15px; }
+  .ad-slot-row .ad-creative.has-image { aspect-ratio: auto !important; height: 76px; }
+  .ad-slot-row .ad-creative-tag { top: 6px; right: 6px; padding: 1px 7px; font-size: 10px; }
+}

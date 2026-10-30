@@ -1,0 +1,65 @@
+﻿rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function ownsUser(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    match /vehicles/{vehicleId} {
+      allow read: if resource.data.status == 'published';
+      allow write: if false;
+    }
+
+    match /blogPosts/{postId} {
+      allow read: if resource.data.published == true;
+      allow write: if false;
+    }
+
+    match /ads/{adId} {
+      allow read, write: if false;
+    }
+
+    match /siteSettings/{settingId} {
+      allow read: if settingId in ['links', 'vehicleCatalog'];
+      allow write: if false;
+    }
+
+    match /users/{uid} {
+      allow read: if ownsUser(uid);
+      allow create: if ownsUser(uid)
+        && request.resource.data.keys().hasOnly([
+          'email', 'displayName', 'avatarUrl', 'savedBlogSlugs', 'updatedAt'
+        ])
+        && request.resource.data.savedBlogSlugs is list
+        && request.resource.data.savedBlogSlugs.size() <= 100;
+      // password alanı yalnızca sunucu/konsol tarafından yönetilir; istemci değiştiremez.
+      allow update: if ownsUser(uid)
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'email', 'displayName', 'avatarUrl', 'savedBlogSlugs', 'updatedAt'
+        ])
+        && request.resource.data.savedBlogSlugs is list
+        && request.resource.data.savedBlogSlugs.size() <= 100;
+      allow delete: if false;
+    }
+
+    match /postLikes/{likeId} {
+      allow read, write: if false;
+    }
+
+    match /postSaves/{saveId} {
+      allow read, write: if false;
+    }
+
+    match /adminNotifications/{notificationId} {
+      allow read, write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
