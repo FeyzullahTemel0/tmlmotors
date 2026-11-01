@@ -3,15 +3,15 @@
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import { ArrowLeft, CalendarDays, Clock, Phone } from "lucide-react";
+import { ArrowLeft, Phone } from "lucide-react";
 import { getFirebaseConnectionStatus } from "@/lib/firebase-client";
 import { getPublishedBlogPosts, getPublishedBlogPostBySlug, type BlogPost } from "@/lib/blog-service";
-import { estimateReadingMinutes, plainText } from "@/lib/blog-content";
+import { plainText } from "@/lib/blog-content";
 import { BlogContent } from "@/components/blog-content";
 import { BlogEngagement } from "@/components/blog-engagement";
 import { BlogAuthor } from "@/components/blog-author";
 import { AdSlot } from "@/components/ad-slot";
-import { fullDate } from "@/lib/time-ago";
+import { timeAgo } from "@/lib/time-ago";
 import { usePreferences } from "@/lib/i18n/preferences-context";
 
 export default function BlogArticlePage() {
@@ -107,14 +107,11 @@ export default function BlogArticlePage() {
         ) : post ? (
           <>
             <header className="post-header">
-              <span className="post-kicker">{t("blog").toLocaleUpperCase(language)}</span>
+              <span className="post-kicker">{t("navBlog").toLocaleUpperCase(language)}</span>
+              {post.category ? <span className="post-category">{post.category}</span> : null}
               <BlogAuthor dateISO={post.createdAt} large />
               <h1>{post.title}</h1>
               <p className="post-intro">{plainText(post.excerpt)}</p>
-              <div className="post-meta">
-                {post.createdAt ? <span><CalendarDays size={15} /> {fullDate(post.createdAt, language)}</span> : null}
-                <span><Clock size={15} /> {t("minutesRead").replace("{min}", String(estimateReadingMinutes(post.content)))}</span>
-              </div>
             </header>
             {post.coverImageUrl ? <img className="post-cover" src={post.coverImageUrl} alt={post.title} /> : null}
             <BlogContent content={post.content} />
@@ -138,7 +135,7 @@ export default function BlogArticlePage() {
                     <Link key={item.id} href={`/blog/${item.slug}`}>
                       {item.coverImageUrl ? <img src={item.coverImageUrl} alt="" loading="lazy" /> : <span className="post-more-fallback" />}
                       <b>{item.title}</b>
-                      <small>{t("minutesRead").replace("{min}", String(estimateReadingMinutes(item.content)))}</small>
+                      {item.createdAt ? <small>{timeAgo(item.createdAt, language)}</small> : null}
                     </Link>
                   ))}
                 </div>

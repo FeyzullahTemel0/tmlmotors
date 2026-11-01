@@ -11,6 +11,14 @@
 .post-intro { margin: 0 0 18px; color: #50534e; font-size: clamp(17px, 2.4vw, 20px); line-height: 1.65; }
 .post-meta { display: flex; flex-wrap: wrap; gap: 8px 18px; color: var(--muted); font-size: 14px; font-weight: 600; }
 .post-meta span { display: inline-flex; align-items: center; gap: 6px; }
+.post-meta span small { font-size: 12px; font-weight: 500; }
+.post-category, .blog-category-label { display: inline-flex; align-items: center; width: fit-content; padding: 6px 11px; border: 1px solid #e6dcc8; border-radius: 999px; color: #765b30; background: #f8f4eb; font-size: 12px; font-weight: 700; }
+.blog-category-filter { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 24px; }
+.blog-category-filter button { min-height: 40px; padding: 0 15px; border: 1px solid var(--line); border-radius: 999px; color: #4a4d49; background: #fff; font: 600 13px var(--sans); cursor: pointer; transition: background .16s ease, color .16s ease, border-color .16s ease; }
+.blog-category-filter button:hover { border-color: var(--gold-dark); }
+.blog-category-filter button.is-active { border-color: #222522; color: #fff; background: #222522; }
+.feed-card .blog-category-label { margin-bottom: 12px; }
+.post-header > .post-category { margin: 12px 0 2px; }
 .post-cover { display: block; width: 100%; max-height: 520px; margin: 0 0 30px; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 18px; background: #e9e5dc; box-shadow: var(--shadow-md); }
 
 .post-body { font-size: 17px; line-height: 1.8; color: #34372f; overflow-wrap: anywhere; }

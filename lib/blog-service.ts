@@ -12,6 +12,7 @@
   type QueryDocumentSnapshot,
 } from "firebase/firestore";
 import { getFirebaseDb } from "@/lib/firebase-client";
+import { normalizeBlogCategory, type BlogCategory } from "@/lib/blog-categories";
 
 export type BlogPost = {
   id: string;
@@ -19,6 +20,7 @@ export type BlogPost = {
   title: string;
   excerpt: string;
   content: string;
+  category: BlogCategory;
   coverImageUrl?: string;
   published: boolean;
   createdAt?: string;
@@ -34,6 +36,7 @@ function mapPost(snapshot: QueryDocumentSnapshot<DocumentData>): BlogPost {
     title: String(data.title ?? ""),
     excerpt: String(data.excerpt ?? ""),
     content: String(data.content ?? ""),
+    category: normalizeBlogCategory(data.category),
     coverImageUrl: data.coverImageUrl ? String(data.coverImageUrl) : undefined,
     published: Boolean(data.published),
     createdAt,

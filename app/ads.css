@@ -55,7 +55,9 @@
 
 /* Dikey reklamların yan alanı */
 .listing-with-aside, .article-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
-.listing-aside, .article-aside { display: none; }
+.listing-aside, .article-aside { display: block; }
+.listing-aside:empty, .article-aside:empty { display: none; }
+.listing-aside .ad-slot, .article-aside .ad-slot { margin-inline: auto; }
 .vehicle-detail-copy .ad-slot { max-width: 240px; margin-top: 22px; }
 .vehicle-detail-copy:has(.ad-slot) { position: static; }
 @media (min-width: 1280px) {

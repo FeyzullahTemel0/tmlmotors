@@ -4,10 +4,11 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged, type User } from "firebase/auth";
-import { ArrowLeft, BadgeCheck, CarFront, ChevronLeft, ChevronRight, CircleCheck, ExternalLink, Flag, Fuel, Gauge, MapPin, Palette, Phone, Settings2, ShieldAlert, X } from "lucide-react";
+import { ArrowLeft, BadgeCheck, CarFront, CircleCheck, ExternalLink, Flag, Fuel, Gauge, MapPin, Palette, Phone, Settings2, ShieldAlert, X } from "lucide-react";
 import { CompareButton, FavoriteButton } from "@/components/vehicle-actions";
 import { formatMileage, type Vehicle } from "@/lib/vehicle-types";
 import { VehicleDamageMap } from "@/components/vehicle-damage-map";
+import { VehicleGallery } from "@/components/vehicle-gallery";
 import { VehicleFeatureList } from "@/components/vehicle-feature-list";
 import { Loading } from "@/components/loading";
 import { ShareMenu } from "@/components/share-menu";
@@ -22,7 +23,6 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(true);
-  const [selectedImage, setSelectedImage] = useState(0);
   const [tab, setTab] = useState<DetailTab>("description");
   const [authUser, setAuthUser] = useState<User | null>(null);
   const [authReady, setAuthReady] = useState(false);
@@ -158,32 +158,7 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
 
         <div className="vd-layout">
           <div className="vd-main">
-            <div className="vd-gallery">
-              {images.length ? (
-                <>
-                  <div className="vd-image" style={{ backgroundImage: `url("${images[selectedImage]}")` }} role="img" aria-label={`${vehicleName} araç fotoğrafı ${selectedImage + 1}`}>
-                    {images.length > 1 ? (
-                      <>
-                        <button type="button" className="vd-nav vd-nav-prev" aria-label="Önceki fotoğraf" onClick={() => setSelectedImage((i) => (i - 1 + images.length) % images.length)}><ChevronLeft size={20} /></button>
-                        <button type="button" className="vd-nav vd-nav-next" aria-label="Sonraki fotoğraf" onClick={() => setSelectedImage((i) => (i + 1) % images.length)}><ChevronRight size={20} /></button>
-                        <span className="vd-counter">{selectedImage + 1} / {images.length}</span>
-                      </>
-                    ) : null}
-                  </div>
-                  {images.length > 1 ? (
-                    <div className="vd-thumbs" aria-label="Araç fotoğrafları">
-                      {images.map((url, index) => (
-                        <button type="button" key={`${url}-${index}`} className={index === selectedImage ? "vd-thumb is-active" : "vd-thumb"} onClick={() => setSelectedImage(index)} aria-label={`${index + 1}. fotoğrafı göster`} aria-pressed={index === selectedImage}>
-                          <span style={{ backgroundImage: `url("${url}")` }} />
-                        </button>
-                      ))}
-                    </div>
-                  ) : null}
-                </>
-              ) : (
-                <div className="vd-image vd-image-empty"><CarFront size={34} strokeWidth={1.3} /><span>Fotoğraf henüz eklenmedi</span></div>
-              )}
-            </div>
+            <VehicleGallery images={images} vehicleName={vehicleName} />
 
             <div className="vd-tabs" role="tablist" aria-label="İlan detayları">
               <button type="button" role="tab" aria-selected={tab === "description"} className={tab === "description" ? "vd-tab is-active" : "vd-tab"} onClick={() => setTab("description")}>{t("tabDescription")}</button>

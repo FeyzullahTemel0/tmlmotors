@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { ArrowRight, ArrowUpRight, BookOpen, CalendarDays, Clock } from "lucide-react";
+import { ArrowRight, ArrowUpRight, BookOpen, CalendarDays } from "lucide-react";
 import { getLatestPublishedBlogPost, type BlogPost } from "@/lib/blog-service";
-import { estimateReadingMinutes, plainText } from "@/lib/blog-content";
+import { plainText } from "@/lib/blog-content";
 import { fullDate, timeAgo } from "@/lib/time-ago";
 import { usePreferences } from "@/lib/i18n/preferences-context";
 
@@ -38,7 +38,6 @@ export function LatestJournal() {
             <span className="jc-meta">
               <span className="jc-badge">{t("latestPost")}</span>
               {post.createdAt ? <span title={fullDate(post.createdAt, language)}><CalendarDays size={13} /> {fullDate(post.createdAt, language)} · {timeAgo(post.createdAt, language)}</span> : null}
-              <span><Clock size={13} /> {t("minutesRead").replace("{min}", String(estimateReadingMinutes(post.content)))}</span>
             </span>
             <b className="jc-title">{post.title}</b>
             <span className="jc-excerpt">{plainText(post.excerpt)}</span>

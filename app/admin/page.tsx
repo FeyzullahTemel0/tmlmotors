@@ -18,6 +18,7 @@ import { emptyAdDraft, getAdStatus, type AdDraft, type AdminAd } from "@/lib/adm
 import type { Vehicle as VehicleRecord, VehicleDamagePart, VehicleTire } from "@/lib/vehicle-types";
 import { featureCatalog, featureGroupKeys, featureGroupLabels, type FeatureGroupKey } from "@/lib/vehicle-features";
 import type { VehicleCatalog as VehicleCatalogType } from "@/lib/vehicle-catalog";
+import { blogCategories, normalizeBlogCategory } from "@/lib/blog-categories";
 
 type AdminTab = "overview" | "vehicles" | "blog" | "ads" | "stats" | "sell" | "reviews" | "dealers" | "announcements" | "notifications" | "complaints" | "messages" | "links";
 type ContactMessage = {
@@ -30,7 +31,7 @@ type AdminComplaint = {
 type ListingStatus = "draft" | "published" | "sold";
 type Vehicle = VehicleRecord;
 type VehicleDraft = Omit<Vehicle, "id"> & { id?: string };
-type BlogPost = { id: string; title: string; slug: string; excerpt: string; content: string; coverImageUrl: string; published: boolean };
+type BlogPost = { id: string; title: string; slug: string; excerpt: string; content: string; category: string; coverImageUrl: string; published: boolean };
 type PostDraft = Omit<BlogPost, "id"> & { id?: string };
 type AdminNotification = {
   id: string; type: "like" | "save"; postId: string; postSlug: string; postTitle: string;
@@ -50,7 +51,7 @@ const emptyVehicle: VehicleDraft = {
   features: {}, featureNotes: {}, tires: [],
   description: "", imageUrls: [], status: "draft", featured: false, heavyDamage: false,
 };
-const emptyPost: PostDraft = { title: "", slug: "", excerpt: "", content: "", coverImageUrl: "", published: false };
+const emptyPost: PostDraft = { title: "", slug: "", excerpt: "", content: "", category: "", coverImageUrl: "", published: false };
 const emptyLinks: Links = { instagram: "", facebook: "", youtube: "", arabam: "", sahibinden: "https://tmlmotors.sahibinden.com", googleReview: "" };
 
 const fuelOptions = ["Benzin + LPG", "Benzin", "Dizel", "Hybrit", "Elektrik"];
@@ -164,7 +165,7 @@ export default function AdminPage() {
       requestApi<{ messages: ContactMessage[] }>("/api/admin/messages", token),
     ]);
     setVehicles(vehicleResult.vehicles);
-    setPosts(postResult.posts);
+    setPosts(postResult.posts.map((item) => ({ ...item, category: normalizeBlogCategory(item.category) })));
     setVehicleCatalog(catalogResult.catalog);
     setNotifications(notificationResult.notifications);
     setUnreadCount(notificationResult.unreadCount);
@@ -457,7 +458,7 @@ export default function AdminPage() {
   }
 
   async function deleteAd(id: string) {
-    if (!user || !window.confirm("Bu reklam kaydını silmek istiyor musunuz?")) return;
+    if (!user) return;
     await perform(async () => {
       await requestApi("/api/admin/ads", await user.getIdToken(), "DELETE", { id });
       if (ad?.id === id) setAd(null);
@@ -744,11 +745,11 @@ export default function AdminPage() {
               {posts.length ? <div className="adm-rows">{posts.map((item) => (
                 <article className="adm-row" key={item.id}>
                   <Thumb url={item.coverImageUrl} large />
-                  <div className="adm-row-info"><div className="adm-row-title"><b>{item.title}</b></div><small>{item.excerpt || "Özet girilmemiş"}</small></div>
+                  <div className="adm-row-info"><div className="adm-row-title"><b>{item.title}</b><span className="adm-pill gold">{normalizeBlogCategory(item.category)}</span></div><small>{item.excerpt || "Özet girilmemiş"}</small></div>
                   <span className={`adm-pill ${item.published ? "green" : "amber"}`}>{item.published ? "Yayında" : "Taslak"}</span>
                   <div className="adm-row-actions">
                     <button className="adm-btn ghost sm" onClick={() => void loadPostEngagement(item)}><Heart size={14} /> Etkileşim</button>
-                    <button className="adm-btn ghost sm" onClick={() => setPost(item)}><Pencil size={14} /> Düzenle</button>
+                    <button className="adm-btn ghost sm" onClick={() => setPost({ ...item, category: normalizeBlogCategory(item.category) })}><Pencil size={14} /> Düzenle</button>
                     <button className="adm-icon-btn danger" aria-label="Yazıyı sil" onClick={() => void deletePost(item.id)}><Trash2 size={16} /></button>
                   </div>
                 </article>
@@ -778,6 +779,12 @@ export default function AdminPage() {
                   {post.coverImageUrl ? <span className="adm-image-preview"><img src={post.coverImageUrl} alt="Kapak" /><button type="button" className="adm-icon-btn danger" aria-label="Kapağı kaldır" onClick={() => setPost({ ...post, coverImageUrl: "" })}><X size={16} /></button></span>
                     : <span className="adm-upload"><ImagePlus size={22} />{uploading ? "Görsel yükleniyor..." : "Kapak fotoğrafı seçin"}<input type="file" accept="image/*" disabled={uploading} onChange={(event) => { void handleBlogCover(event.target.files?.[0]); event.target.value = ""; }} /></span>}
                 </div>
+                <label className="adm-field">Kategori
+                  <select required value={post.category} onChange={(event) => setPost({ ...post, category: event.target.value })}>
+                    <option value="" disabled>Kategori seçin</option>
+                    {blogCategories.map((category) => <option key={category} value={category}>{category}</option>)}
+                  </select>
+                </label>
                 <div className="adm-field">Yazı içeriği
                   <BlogEditor value={post.content} onChange={(content) => setPost({ ...post, content })} onUpload={(file) => runUpload(file, "blog")} uploading={uploading} />
                 </div>

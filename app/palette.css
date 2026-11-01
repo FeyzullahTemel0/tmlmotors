@@ -1,0 +1,82 @@
+/* Site geneli renk dengesi: derin antrasit, zümrüt vurgu, nötr açık yüzeyler.
+   --gold* değişken adları korunur; değerleri zümrüt tonlarına çevrilmiştir. */
+:root {
+  --ink: #101614;
+  --ink-soft: #1d2622;
+  --muted: #68716d;
+  --paper: #f3f4f2;
+  --paper-deep: #e8ebe8;
+  --white: #ffffff;
+  --line: #dde1de;
+  --line-dark: rgba(255,255,255,.12);
+  --gold: #2fbf84;
+  --gold-light: #4fe0a3;
+  --gold-dark: #0d6b47;
+}
+
+body { background: var(--paper); }
+
+/* Üst bar ve menü */
+.topline { background: #090d0b; }
+.site-header { background: rgba(14,20,17,.96); }
+
+/* Hero */
+.hero { background: radial-gradient(ellipse at 82% 28%, rgba(47,191,132,.16), transparent 32%), #0d1311; }
+.hero::before { background: linear-gradient(90deg, #0d1311 0%, rgba(13,19,17,.95) 34%, rgba(13,19,17,.55) 57%, rgba(13,19,17,.1) 100%), linear-gradient(0deg, rgba(6,10,8,.55), transparent 34%); }
+.hero::after { background: linear-gradient(90deg, transparent, rgba(79,224,163,.45), transparent); }
+.hero-visual { background: #18211d; box-shadow: 0 34px 100px rgba(0,0,0,.5); }
+.hero-visual-caption span, .hero-visual-number { color: #8ff0c4; }
+.hero-visual-overlay { background: linear-gradient(180deg, rgba(8,12,10,.5), transparent 28%, transparent 56%, rgba(8,12,10,.82)), linear-gradient(90deg, rgba(8,12,10,.25), transparent 62%); }
+
+/* Birincil düğme */
+.button-primary { color: #04140c; background: linear-gradient(110deg, #29b678, #4fe0a3 52%, #25ad72); box-shadow: 0 10px 28px rgba(47,191,132,.28); }
+.button-primary:hover { background: linear-gradient(110deg, #33c685, #62ebb1 52%, #2dbb7f); }
+.contact-link { border-color: rgba(79,224,163,.5); color: #eafaf2; }
+
+/* Bilgi şeridi */
+.intro-strip { background: linear-gradient(180deg, #121a17, #151e1a); border-bottom-color: rgba(255,255,255,.07); }
+.intro-strip::before { background: linear-gradient(90deg, transparent, rgba(79,224,163,.55), transparent); }
+.intro-strip .intro-strip-inner > span { color: #f2f6f4; }
+.intro-strip .intro-strip-inner b { color: var(--gold-light); }
+
+/* Son blog yazısı: açık zemin üzerinde koyu kart */
+.jc { background: #f3f4f2; padding: 54px 0 58px; }
+.jc .jc-eyebrow { color: var(--gold-dark); }
+.jc .jc-all { color: var(--ink); }
+.jc .jc-all:hover { color: var(--gold-dark); }
+.jc .jc-card { border-color: rgba(255,255,255,.06); background: linear-gradient(135deg, #1b2622, #121a17); box-shadow: 0 24px 60px rgba(10,18,14,.25); }
+.jc .jc-card:hover { border-color: rgba(79,224,163,.55); box-shadow: 0 30px 70px rgba(10,18,14,.35); }
+.jc .jc-media::after { background: linear-gradient(90deg, transparent 55%, rgba(18,26,23,.92)); }
+.jc .jc-badge { color: #04140c; background: var(--gold-light); }
+.jc .jc-cta { color: var(--gold-light); }
+@media (max-width: 680px) {
+  .jc .jc-media::after { background: linear-gradient(180deg, transparent 55%, rgba(18,26,23,.92)); }
+}
+
+/* Koyu bölümler */
+.inventory-section { background: radial-gradient(ellipse at 88% 50%, rgba(47,191,132,.14), transparent 38%), #121a17; }
+.contact-banner { background: linear-gradient(110deg, #1b2622, #0f1512); }
+.site-footer { background: #0a0f0d; }
+.approach-section { background: var(--paper-deep); }
+.sell-callout { border-color: #d3d9d5; background: #e6eae7; }
+
+/* Sıcak krem tonları yerine nötr, hafif yeşilimsi porselen */
+.journal-category, .jc-badge, .contact-card-icon { background: #dff3ea; }
+.contact-card, .contact-form { border-color: var(--line); }
+.contact-form input, .contact-form textarea { border-color: #d3d9d5; background: #f9faf9; }
+.contact-form input:focus, .contact-form textarea:focus { box-shadow: 0 0 0 3px rgba(47,191,132,.28); }
+.journal-feature, .journal-section > .container > .blog-engagement { border-color: var(--line); background: #f8f9f8; }
+.vehicle-card { background: #fff; }
+
+/* Kalan sıcak altın artıkları */
+.subpage-hero { background: radial-gradient(ellipse at 87% 35%, rgba(47,191,132,.15), transparent 34%), #111915; }
+.cookie-banner { border-color: rgba(79,224,163,.4); background: rgba(14,20,17,.97); }
+.cookie-banner button, .compare-bar-go { color: #04140c; background: linear-gradient(110deg, #29b678, #4fe0a3); }
+.adm { --a-gold: #2fbf84; --a-gold-d: #0d6b47; --a-side: #0f1512; --a-bg: #f1f3f1; --a-line: #e0e4e1; }
+.adm-btn.primary, .adm-btn.gold { color: #04140c; background: linear-gradient(110deg, #4fe0a3, #29b678); box-shadow: 0 6px 16px rgba(47,191,132,.28); }
+.adm-step { background: #cdf1e1; }
+.adm-cover-tag, .adm-pl.is-selected .adm-pl-check, .adm-editor-toolbar .is-on { color: #04140c; }
+.admin-nav-item.active, .admin-hero-button { color: #04140c; background: linear-gradient(110deg, #4fe0a3, #29b678); }
+.footer-free-note, .site-footer p b { color: #8ff0c4; }
+.blog-category-label, .post-category, .blog-category-filter button.is-active { color: var(--gold-dark); background: #dff3ea; border-color: transparent; }
+.site-footer-bottom p, .footer-bottom p { color: #cfe9dc; }

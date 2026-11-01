@@ -8,7 +8,7 @@ export async function GET(request: Request) {
     if (!adPlacementIds.includes(placement)) return NextResponse.json({ error: "Geçersiz reklam konumu." }, { status: 400 });
 
     const snapshot = await getAdminDb().collection("ads").where("active", "==", true).limit(100).get();
-    const today = new Date().toISOString().slice(0, 10);
+    const today = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Istanbul" });
     const ads: PublicAd[] = snapshot.docs
       .map((document) => {
         const data = document.data();
@@ -29,7 +29,7 @@ export async function GET(request: Request) {
       .sort((a, b) => b.priority - a.priority)
       .map(({ startDate: _start, endDate: _end, ...ad }) => ad);
 
-    return NextResponse.json({ ads }, { headers: { "Cache-Control": "public, s-maxage=60, stale-while-revalidate=300" } });
+    return NextResponse.json({ ads }, { headers: { "Cache-Control": "public, s-maxage=10, stale-while-revalidate=30" } });
   } catch (error) {
     const result = apiError(error);
     return NextResponse.json({ error: result.error }, { status: result.status });

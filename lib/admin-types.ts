@@ -26,7 +26,7 @@ export const emptyAdDraft: AdDraft = {
 
 export type AdStatus = "live" | "scheduled" | "expired" | "paused";
 
-export function getAdStatus(ad: Pick<AdminAd, "active" | "startDate" | "endDate">, today = new Date().toISOString().slice(0, 10)): AdStatus {
+export function getAdStatus(ad: Pick<AdminAd, "active" | "startDate" | "endDate">, today = new Date().toLocaleDateString("en-CA", { timeZone: "Europe/Istanbul" })): AdStatus {
   if (!ad.active) return "paused";
   if (ad.startDate && ad.startDate > today) return "scheduled";
   if (ad.endDate && ad.endDate < today) return "expired";

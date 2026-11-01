@@ -47,7 +47,7 @@ export function SiteFooter() {
           <Link href="/araclar">{t("footerConsulting")}</Link>
           <Link href="/hasarli-araclar">Hasarlı araçlar</Link>
           <Link href="/aracimi-sat">Aracımı sat</Link>
-          <Link href="/galericiler">Anlaşmalı galericiler</Link>
+          <Link href="/galericiler">{t("navDealers")}</Link>
           <Link href="/duyurular">Duyurular</Link>
           <Link href="/yorumlar">Müşteri yorumları</Link>
           <Link href="/sss">Sıkça sorulan sorular</Link>

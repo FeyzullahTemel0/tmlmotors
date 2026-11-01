@@ -17,6 +17,8 @@ export default function HomePage() {
   return (
     <>
       <section className="hero">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img className="hero-backdrop" src="/hero-porsche.gif" alt="" aria-hidden="true" />
         <div className="container hero-layout">
           <div className="hero-copy">
             <span className="eyebrow eyebrow-light"><MapPin size={14} /> GAZİANTEP · GÜNSEV OTO AVM</span>
@@ -28,7 +30,8 @@ export default function HomePage() {
             </div>
           </div>
           <div className="hero-visual" aria-label="TML MOTORS">
-            <div className="hero-visual-image" />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img className="hero-visual-image" src="/hero-porsche.gif" alt="TML MOTORS" />
             <div className="hero-visual-overlay" />
             <div className="hero-visual-mark"><span>TML MOTORS</span><i /> <span>GAZİANTEP</span></div>
             <div className="hero-visual-caption"><span>{t("heroCaptionTags")}</span><b>{t("heroCaptionBold")}</b></div>

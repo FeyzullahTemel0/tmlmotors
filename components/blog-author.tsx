@@ -38,7 +38,7 @@ export function BlogAuthor({ dateISO, large = false }: { dateISO?: string; large
       </div>
       {dateISO ? (
         <time dateTime={dateISO} title={fullDate(dateISO, language)}>
-          {fullDate(dateISO, language)} - {timeAgo(dateISO, language)}
+          {fullDate(dateISO, language)} · {timeAgo(dateISO, language)}
         </time>
       ) : null}
     </header>

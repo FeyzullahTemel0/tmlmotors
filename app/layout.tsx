@@ -12,6 +12,8 @@ import "./blog.css";
 import "./home.css";
 import "./profile.css";
 import "./features.css";
+import "./palette.css";
+import "./admin-map.css";
 
 export const metadata: Metadata = {
   title: {
