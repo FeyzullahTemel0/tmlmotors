@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Car, CircleUserRound, FileText, Home } from "lucide-react";
+import { Car, CircleUserRound, FileText, Home, Tag } from "lucide-react";
 import { usePreferences } from "@/lib/i18n/preferences-context";
 import type { TranslationKey } from "@/lib/i18n/translations";
 
 const items: { href: string; key: TranslationKey; icon: typeof Home; exact: boolean }[] = [
   { href: "/", key: "home", icon: Home, exact: true },
   { href: "/araclar", key: "tabVehicles", icon: Car, exact: false },
+  { href: "/aracimi-sat", key: "navSell", icon: Tag, exact: false },
   { href: "/blog", key: "tabBlog", icon: FileText, exact: false },
   { href: "/profil", key: "tabProfile", icon: CircleUserRound, exact: false },
 ];

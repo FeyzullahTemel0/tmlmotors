@@ -11,7 +11,7 @@ export default function NotFound() {
         <div className="state-actions">
           <Link className="button button-primary" href="/">Ana sayfaya dön <ArrowRight size={16} /></Link>
           <Link className="state-link" href="/araclar"><Car size={16} /> Yayındaki araçlar</Link>
-          <Link className="state-link" href="/blog"><FileText size={16} /> TML MOTORS Notları</Link>
+          <Link className="state-link" href="/blog"><FileText size={16} /> Otomobil Rehberi</Link>
           <a className="state-link" href="tel:+905535781136"><Phone size={16} /> +90 553 578 11 36</a>
         </div>
       </div>

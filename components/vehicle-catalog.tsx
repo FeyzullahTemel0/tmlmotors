@@ -6,8 +6,9 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, Search, SlidersHorizontal } from "
 import { formatMileage, type Vehicle } from "@/lib/vehicle-types";
 import { Loading } from "@/components/loading";
 import { usePreferences } from "@/lib/i18n/preferences-context";
+import { CompareButton, FavoriteButton } from "@/components/vehicle-actions";
 
-export function VehicleCatalog({ featuredOnly = false }: { featuredOnly?: boolean }) {
+export function VehicleCatalog({ featuredOnly = false, scope = "normal" }: { featuredOnly?: boolean; scope?: "normal" | "damaged" }) {
   const { t } = usePreferences();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [query, setQuery] = useState("");
@@ -25,7 +26,7 @@ export function VehicleCatalog({ featuredOnly = false }: { featuredOnly?: boolea
     let mounted = true;
     async function load() {
       try {
-        const response = await fetch("/api/vehicles", { cache: "no-store" });
+        const response = await fetch(`/api/vehicles?scope=${scope}`, { cache: "no-store" });
         const data = await response.json();
         if (!response.ok) throw new Error(data.error ?? "Araç ilanları şu anda alınamıyor.");
         if (mounted) setVehicles(data.vehicles as Vehicle[]);
@@ -37,7 +38,7 @@ export function VehicleCatalog({ featuredOnly = false }: { featuredOnly?: boolea
     }
     void load();
     return () => { mounted = false; };
-  }, []);
+  }, [scope]);
 
   const filteredVehicles = useMemo(() => {
     const normalized = query.toLocaleLowerCase("tr-TR").trim();
@@ -113,15 +114,16 @@ export function VehicleCatalog({ featuredOnly = false }: { featuredOnly?: boolea
   );
 }
 
-function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
+export function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
   const { formatPrice, t } = usePreferences();
   const image = vehicle.imageUrls?.[0];
   return (
     <article className="vehicle-card">
       <Link href={`/araclar/${vehicle.id}`} className={image ? "vehicle-card-image has-image" : "vehicle-card-image"} style={image ? { backgroundImage: `url("${image}")` } : undefined} aria-label={`${vehicle.title} ilan detayları`}>
-        <span className="vehicle-card-label">{vehicle.featured ? "TML MOTORS SEÇKİSİ" : "TML MOTORS İLANI"}</span>
+        <span className="vehicle-card-label">{vehicle.heavyDamage ? "AĞIR HASARLI" : vehicle.featured ? "TML MOTORS SEÇKİSİ" : "TML MOTORS İLANI"}</span>
         <span className="vehicle-card-arrow"><ArrowUpRight size={17} /></span>
       </Link>
+      <div className="vehicle-card-actions"><FavoriteButton vehicleId={vehicle.id} /><CompareButton vehicleId={vehicle.id} /></div>
       <div className="vehicle-card-info">
         <div className="vehicle-card-overline">{vehicle.year} <span /> {vehicle.brand}</div>
         <h3><Link href={`/araclar/${vehicle.id}`}>{vehicle.title || [vehicle.brand, vehicle.series, vehicle.model, vehicle.trim, vehicle.subTrim].filter(Boolean).join(" ")}</Link></h3>

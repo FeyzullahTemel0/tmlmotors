@@ -62,7 +62,9 @@ export default function LoginPage() {
   async function finishSignIn(credential: UserCredential) {
     const isAdmin = await checkIsAdmin(() => credential.user.getIdToken(true));
     setSuccessMessage(isAdmin ? t("signInSuccessAdmin") : t("signInSuccessProfile"));
-    router.push(isAdmin ? "/admin" : "/profil");
+    const next = new URLSearchParams(window.location.search).get("next") ?? "";
+    const safeNext = next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/admin") ? next : "";
+    router.push(isAdmin ? "/admin" : safeNext || "/profil");
   }
 
   async function handleGoogle() {

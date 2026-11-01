@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import { SiteShell } from "@/components/site-shell";
+import { JsonLd } from "@/components/json-ld";
 import { getSiteUrl } from "@/lib/site-url";
 import { PreferencesProvider } from "@/lib/i18n/preferences-context";
+import { VehicleCollectionsProvider } from "@/lib/vehicle-collections";
 import "./globals.css";
 import "./modern.css";
 import "./admin.css";
 import "./ads.css";
 import "./blog.css";
 import "./home.css";
+import "./profile.css";
+import "./features.css";
 
 export const metadata: Metadata = {
   title: {
@@ -31,11 +35,25 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const siteUrl = getSiteUrl();
   return (
     <html lang="tr">
       <body>
+        <JsonLd data={{
+          "@context": "https://schema.org",
+          "@type": "AutoDealer",
+          name: "TML MOTORS",
+          url: siteUrl,
+          telephone: "+905535781136",
+          description: "Gaziantep Günsev Oto AVM'de araç alım satım danışmanlığı.",
+          identifier: "Yetki Belge No: 2701072",
+          address: { "@type": "PostalAddress", streetAddress: "Günsev Oto AVM", addressLocality: "Gaziantep", addressCountry: "TR" },
+          sameAs: ["https://tmlmotors.sahibinden.com"],
+        }} />
         <PreferencesProvider>
-          <SiteShell>{children}</SiteShell>
+          <VehicleCollectionsProvider>
+            <SiteShell>{children}</SiteShell>
+          </VehicleCollectionsProvider>
         </PreferencesProvider>
       </body>
     </html>

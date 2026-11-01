@@ -256,15 +256,23 @@
 .adm-editor-preview .post-body { font-size: 17px; }
 
 /* Tam ekran çalışma alanı (ilan, yazı, reklam düzenleme) */
-.adm-sheet { position: fixed; inset: 0; z-index: 90; display: flex; flex-direction: column; background: var(--a-bg); animation: adm-sheet-in .22s ease both; }
+.adm-sheet { position: fixed; top: 0; right: 0; left: 0; z-index: 90; display: flex; height: 100vh; height: 100dvh; flex-direction: column; background: var(--a-bg); animation: adm-sheet-in .22s ease both; }
 @keyframes adm-sheet-in { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-.adm-sheet-head { display: flex; align-items: center; gap: 12px; padding: 12px clamp(14px, 3vw, 32px); border-bottom: 1px solid var(--a-line); background: #fff; }
-.adm-sheet-head > div { min-width: 0; }
+.adm-sheet-head { display: flex; flex: 0 0 auto; align-items: center; gap: 12px; padding: 12px clamp(14px, 3vw, 32px); border-bottom: 1px solid var(--a-line); background: #fff; }
+.adm-sheet-head > .adm-sheet-title { flex: 1; min-width: 0; }
+.adm-sheet-head-action { display: none; flex: 0 0 auto; }
+.adm-sheet-head-action .adm-btn { min-height: 38px; padding: 0 14px; font-size: 13.5px; white-space: nowrap; }
+.adm-sheet-nav { display: flex; flex: 0 0 auto; gap: 8px; padding: 8px clamp(14px, 3vw, 32px); overflow-x: auto; border-bottom: 1px solid var(--a-line); background: #fbfaf7; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+.adm-sheet-nav::-webkit-scrollbar { display: none; }
+.adm-sheet-nav button { display: inline-flex; flex: 0 0 auto; align-items: center; gap: 7px; max-width: 190px; min-height: 36px; padding: 0 13px 0 7px; overflow: hidden; border: 1px solid var(--a-line); border-radius: 999px; color: var(--a-muted); background: #fff; font: 700 13px var(--body); text-overflow: ellipsis; white-space: nowrap; cursor: pointer; transition: border-color .15s, color .15s, background .15s; }
+.adm-sheet-nav button i { display: grid; flex: 0 0 22px; place-items: center; width: 22px; height: 22px; border-radius: 50%; color: var(--a-muted); background: #efece4; font-size: 11.5px; font-style: normal; font-weight: 800; }
+.adm-sheet-nav button.is-active { border-color: var(--a-gold); color: var(--a-ink); background: #fff; box-shadow: inset 0 0 0 1px var(--a-gold); }
+.adm-sheet-nav button.is-active i { color: #fff; background: var(--a-ink); }
 .adm-sheet-head h2 { font-size: 18px; line-height: 1.25; }
 .adm-sheet-head p { overflow: hidden; color: var(--a-muted); font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
-.adm-sheet-body { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 20px clamp(14px, 3vw, 32px) 28px; -webkit-overflow-scrolling: touch; }
+.adm-sheet-body { flex: 1 1 0; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 20px clamp(14px, 3vw, 32px) 28px; scroll-padding-block: 90px; -webkit-overflow-scrolling: touch; }
 .adm-sheet-inner { width: 100%; max-width: 1200px; margin: 0 auto; }
-.adm-sheet-foot { padding: 10px clamp(14px, 3vw, 32px) calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--a-line); background: #fff; box-shadow: 0 -8px 24px rgba(20,20,18,.06); }
+.adm-sheet-foot { flex: 0 0 auto; padding: 10px clamp(14px, 3vw, 32px) calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--a-line); background: #fff; box-shadow: 0 -8px 24px rgba(20,20,18,.06); }
 .adm-sheet-actions { display: flex; gap: 10px; }
 .adm-sheet-actions .adm-btn.primary { flex: 1; }
 .adm-sheet .adm-narrow { margin-inline: auto; }
@@ -337,9 +345,14 @@
   .adm-slot small { font-size: 11.5px; }
   .adm-slot .adm-pill { font-size: 11px; }
   .adm-ad-row { padding: 12px 0; gap: 10px; }
-  .adm-sheet-head { padding: 10px 12px; }
-  .adm-sheet-head h2 { font-size: 16px; }
-  .adm-sheet-body { padding: 12px 12px 20px; }
+  .adm-sheet-head { gap: 10px; padding: 8px 12px; }
+  .adm-sheet-head h2 { overflow: hidden; font-size: 15.5px; text-overflow: ellipsis; white-space: nowrap; }
+  .adm-sheet-head p { font-size: 12px; }
+  .adm-sheet-head .adm-icon-btn { width: 38px; height: 38px; flex: 0 0 38px; }
+  .adm-sheet-head-action { display: block; }
+  .adm-sheet-nav { padding: 7px 12px; }
+  .adm-sheet-nav button { min-height: 34px; font-size: 12.5px; }
+  .adm-sheet-body { padding: 12px 12px 24px; }
   .adm-sheet-foot { padding: 8px 12px calc(8px + env(safe-area-inset-bottom)); }
   .adm-field .adm-editor-area { min-height: min(46vh, 380px); padding: 12px; }
   .adm-thumbs { grid-template-columns: repeat(auto-fill, minmax(92px, 1fr)); gap: 8px; }

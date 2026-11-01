@@ -36,9 +36,19 @@ export async function PATCH(request: Request) {
     await requireAdmin(request);
     const body: unknown = await request.json();
     if (!body || typeof body !== "object" || Array.isArray(body)) throw new InputError("Bildirim bilgisi geçersiz.");
+    const db = getAdminDb();
+
+    if ((body as { all?: unknown }).all === true) {
+      const unread = await db.collection("adminNotifications").where("read", "==", false).limit(400).get();
+      const batch = db.batch();
+      unread.docs.forEach((document) => batch.update(document.ref, { read: true, readAt: FieldValue.serverTimestamp() }));
+      if (!unread.empty) await batch.commit();
+      return NextResponse.json({ success: true, updated: unread.size });
+    }
+
     const id = (body as { id?: unknown }).id;
     if (typeof id !== "string" || !id.trim()) throw new InputError("Okundu olarak işaretlenecek bildirim seçilmedi.");
-    await getAdminDb().collection("adminNotifications").doc(id).update({
+    await db.collection("adminNotifications").doc(id).update({
       read: true,
       readAt: FieldValue.serverTimestamp(),
     });

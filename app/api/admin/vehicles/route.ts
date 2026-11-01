@@ -113,7 +113,8 @@ function validateVehicle(value: unknown) {
     description: cleanText(data.description, 10000),
     imageUrls,
     status,
-    featured: Boolean(data.featured),
+    featured: Boolean(data.featured) && data.heavyDamage !== true,
+    heavyDamage: data.heavyDamage === true,
     updatedAt: FieldValue.serverTimestamp(),
   };
 }

@@ -1,13 +1,15 @@
 ﻿"use client";
 
 import Link from "next/link";
-import { ArrowRight, CarFront, Handshake, MapPin, Phone, Scale, ShieldCheck } from "lucide-react";
+import { ArrowRight, CarFront, Handshake, MapPin, MessageCircle, Navigation, Phone, Scale, ShieldCheck } from "lucide-react";
 import { VehicleCatalog } from "@/components/vehicle-catalog";
 import { AdSlot } from "@/components/ad-slot";
 import { LatestJournal } from "@/components/latest-journal";
+import { HomeTrust } from "@/components/home-trust";
 import { usePreferences } from "@/lib/i18n/preferences-context";
 
 const phone = "+905535781136";
+const mapsUrl = "https://www.google.com/maps/search/?api=1&query=G%C3%BCnsev+Oto+AVM+Gaziantep";
 
 export default function HomePage() {
   const { t } = usePreferences();
@@ -72,7 +74,9 @@ export default function HomePage() {
 
       <div className="container ad-band"><AdSlot placement="home-bottom" /></div>
 
-      <section className="contact-banner"><div className="container contact-inner"><div><span className="eyebrow eyebrow-light">TML MOTORS · GAZİANTEP</span><h2>{t("contactBannerTitle")}</h2><p>{t("contactBannerText")}</p></div><a className="button button-primary" href={`tel:${phone}`}>+90 553 578 11 36 <Phone size={16} /></a></div></section>
+      <HomeTrust />
+
+      <section className="contact-banner"><div className="container contact-inner"><div><span className="eyebrow eyebrow-light">TML MOTORS · GAZİANTEP</span><h2>{t("contactBannerTitle")}</h2><p>{t("contactBannerText")}</p></div><div className="contact-actions"><a className="button button-primary" href={`tel:${phone}`}>+90 553 578 11 36 <Phone size={16} /></a><a className="contact-link" href={`https://wa.me/${phone.replace("+", "")}`} target="_blank" rel="noopener noreferrer"><MessageCircle size={16} /> {t("whatsappCta")}</a><a className="contact-link" href={mapsUrl} target="_blank" rel="noopener noreferrer"><Navigation size={16} /> {t("directionsCta")}</a></div></div></section>
     </>
   );
 }

@@ -4,7 +4,8 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged, type User } from "firebase/auth";
-import { ArrowLeft, BadgeCheck, CarFront, ChevronLeft, ChevronRight, CircleCheck, ExternalLink, Flag, Fuel, Gauge, MapPin, Palette, Phone, Settings2, X } from "lucide-react";
+import { ArrowLeft, BadgeCheck, CarFront, ChevronLeft, ChevronRight, CircleCheck, ExternalLink, Flag, Fuel, Gauge, MapPin, Palette, Phone, Settings2, ShieldAlert, X } from "lucide-react";
+import { CompareButton, FavoriteButton } from "@/components/vehicle-actions";
 import { formatMileage, type Vehicle } from "@/lib/vehicle-types";
 import { VehicleDamageMap } from "@/components/vehicle-damage-map";
 import { VehicleFeatureList } from "@/components/vehicle-feature-list";
@@ -24,6 +25,7 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
   const [selectedImage, setSelectedImage] = useState(0);
   const [tab, setTab] = useState<DetailTab>("description");
   const [authUser, setAuthUser] = useState<User | null>(null);
+  const [authReady, setAuthReady] = useState(false);
   const [complaintOpen, setComplaintOpen] = useState(false);
   const [complaintMessage, setComplaintMessage] = useState("");
   const [complaintSending, setComplaintSending] = useState(false);
@@ -32,7 +34,29 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
   const { formatPrice, t } = usePreferences();
   const router = useRouter();
 
-  useEffect(() => onAuthStateChanged(getFirebaseAuth(), (nextUser) => setAuthUser(nextUser)), []);
+  useEffect(() => onAuthStateChanged(getFirebaseAuth(), (nextUser) => { setAuthUser(nextUser); setAuthReady(true); }), []);
+
+  const viewedId = vehicle?.id;
+  useEffect(() => {
+    if (!viewedId || !authReady) return;
+    const sessionKey = `tml-viewed-${viewedId}`;
+    if (window.sessionStorage.getItem(sessionKey)) return;
+    window.sessionStorage.setItem(sessionKey, "1");
+    let visitorId = window.localStorage.getItem("tml-visitor");
+    if (!visitorId) {
+      visitorId = (window.crypto?.randomUUID?.() ?? `${Date.now()}${Math.random().toString(36).slice(2)}`).replace(/[^a-zA-Z0-9_-]/g, "");
+      window.localStorage.setItem("tml-visitor", visitorId);
+    }
+    void (async () => {
+      try {
+        const headers: Record<string, string> = { "Content-Type": "application/json" };
+        if (authUser) headers.Authorization = `Bearer ${await authUser.getIdToken()}`;
+        await fetch(`/api/vehicles/${encodeURIComponent(viewedId)}/view`, { method: "POST", headers, body: JSON.stringify({ visitorId }), keepalive: true });
+      } catch {
+        // Görüntülenme sayımı kullanıcı deneyimini etkilememelidir.
+      }
+    })();
+  }, [viewedId, authReady, authUser]);
 
   useEffect(() => {
     let mounted = true;
@@ -110,7 +134,7 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
     <section className="vd-page">
       <div className="container">
         <div className="vd-topline">
-          <Link href="/araclar" className="text-link"><ArrowLeft size={14} /> {t("allVehicles")}</Link>
+          <Link href={vehicle.heavyDamage ? "/hasarli-araclar" : "/araclar"} className="text-link"><ArrowLeft size={14} /> {vehicle.heavyDamage ? "Hasarlı araçlar" : t("allVehicles")}</Link>
           <div className="vd-topline-actions">
             <ShareMenu title={vehicleName} className="inline-control" label={t("shareListing")} />
             <button type="button" className="inline-control vd-report" aria-label={t("complaintLink")} title={t("complaintLink")} onClick={openComplaint}>
@@ -121,13 +145,15 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
 
         <header className="vd-header">
           <div className="vd-title-row">
-            <span className="vd-chip">{vehicle.featured ? "TML MOTORS SEÇKİSİ" : "TML MOTORS İLANI"}</span>
+            <span className="vd-chip">{vehicle.heavyDamage ? "AĞIR HASARLI" : vehicle.featured ? "TML MOTORS SEÇKİSİ" : "TML MOTORS İLANI"}</span>
             <h1>{vehicleName}</h1>
           </div>
           <div className="vd-meta">
             <span><MapPin size={14} /> Gaziantep · Günsev Oto AVM</span>
             <span><CircleCheck size={14} /> {t("licenseLabel")}: 2701072</span>
           </div>
+          <div className="vd-collection-actions"><FavoriteButton vehicleId={vehicle.id} variant="full" /><CompareButton vehicleId={vehicle.id} variant="full" /></div>
+          {vehicle.heavyDamage ? <div className="damaged-info"><ShieldAlert size={20} aria-hidden="true" /><p><b>Ağır hasar kayıtlı araç.</b> Hasar bilgileri bu ilanda açıkça gösterilmiştir. Satın almadan önce aracı ekspertizde görmenizi ve hasar detaylarını bizimle birlikte incelemenizi öneririz.</p></div> : null}
         </header>
 
         <div className="vd-layout">
@@ -218,6 +244,7 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
                 </a>
               ) : null}
               <small>{t("sellerCallHint")}</small>
+              <small className="no-payment-note"><ShieldAlert size={13} /> TML MOTORS hiçbir hizmet için ön ödeme, kapora veya havale istemez.</small>
             </div>
 
             <p className="vd-note">{t("listingDisclaimer")}</p>

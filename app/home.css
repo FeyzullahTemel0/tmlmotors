@@ -1,4 +1,11 @@
 /* Ana sayfa: kompakt son blog yazısı */
+.contact-inner > .contact-actions { display: flex; flex: 0 0 auto; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 12px; max-width: 520px; }
+.contact-link { display: inline-flex; align-items: center; gap: 8px; min-height: 48px; padding: 0 20px; border: 1px solid rgba(215, 188, 145, .4); border-radius: 999px; color: #f3ece0; font-weight: 700; font-size: 15px; text-decoration: none; transition: background .25s ease, border-color .25s ease; }
+.contact-link:hover { border-color: var(--gold-light); background: rgba(215, 188, 145, .12); }
+@media (max-width: 900px) {
+  .contact-inner > .contact-actions { width: 100%; max-width: none; justify-content: flex-start; }
+  .contact-actions > * { flex: 1 1 100%; justify-content: center; }
+}
 .jc { padding: 40px 0 44px; background: var(--white); }
 .jc-head { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
 .jc-eyebrow { display: inline-flex; align-items: center; gap: 8px; color: var(--gold-dark); font-size: 12px; font-weight: 800; letter-spacing: .1em; }

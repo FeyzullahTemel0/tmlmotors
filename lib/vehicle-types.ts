@@ -45,6 +45,7 @@ export type Vehicle = {
   imageUrls: string[];
   status: VehicleStatus;
   featured: boolean;
+  heavyDamage?: boolean;
 };
 
 export function formatVehiclePrice(price: number | null): string {

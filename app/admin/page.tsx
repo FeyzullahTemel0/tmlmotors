@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged, signOut, type User } from "firebase/auth";
 import {
-  ArrowLeft, ArrowRight, Bell, Bookmark, Car, Check, ExternalLink, Eye, FileText, Flag, Heart, ImagePlus, LayoutDashboard,
+  ArrowLeft, ArrowRight, Bell, Bookmark, Building2, Car, Check, ExternalLink, Eye, FileText, Flag, Heart, ImagePlus, LayoutDashboard,
   Link2, LogOut, Megaphone, Menu, MessageSquareText, MousePointerClick, Pencil, Plus, Save, Search, Star, Trash2, X,
 } from "lucide-react";
 import { getFirebaseAuth, getFirebaseConnectionStatus } from "@/lib/firebase-client";
@@ -12,13 +12,14 @@ import { VehicleDamageMap } from "@/components/vehicle-damage-map";
 import { AdManager } from "@/components/admin/ad-manager";
 import { EditorSheet } from "@/components/admin/editor-sheet";
 import { BlogEditor } from "@/components/admin/blog-editor";
+import { AnnouncementsPanel, DealersPanel, ReviewsPanel, SellRequestsPanel, StatsPanel, useBusinessBadges } from "@/components/admin/business-panels";
 import { adPlacements, legacyAdPlacements } from "@/lib/ad-placements";
 import { emptyAdDraft, getAdStatus, type AdDraft, type AdminAd } from "@/lib/admin-types";
 import type { Vehicle as VehicleRecord, VehicleDamagePart, VehicleTire } from "@/lib/vehicle-types";
 import { featureCatalog, featureGroupKeys, featureGroupLabels, type FeatureGroupKey } from "@/lib/vehicle-features";
 import type { VehicleCatalog as VehicleCatalogType } from "@/lib/vehicle-catalog";
 
-type AdminTab = "overview" | "vehicles" | "blog" | "ads" | "notifications" | "complaints" | "messages" | "links";
+type AdminTab = "overview" | "vehicles" | "blog" | "ads" | "stats" | "sell" | "reviews" | "dealers" | "announcements" | "notifications" | "complaints" | "messages" | "links";
 type ContactMessage = {
   id: string; name: string; email: string; phone: string; message: string; read: boolean; createdAt: string | null;
 };
@@ -40,17 +41,17 @@ type PostEngagement = {
   likes: { count: number; users: InteractionUser[] };
   saves: { count: number; users: InteractionUser[] };
 };
-type Links = { instagram: string; facebook: string; youtube: string; arabam: string; sahibinden: string };
+type Links = { instagram: string; facebook: string; youtube: string; arabam: string; sahibinden: string; googleReview: string };
 
 const emptyVehicle: VehicleDraft = {
   title: "", brand: "", series: "", model: "", trim: "", subTrim: "", year: new Date().getFullYear(), mileage: 0, price: null,
   fuel: "", transmission: "", bodyType: "", engineVolume: "", enginePower: "", drive: "", color: "",
   vehicleCondition: "İkinci El", from: "Galeriden", trade: false, sahibindenUrl: "", damageParts: [],
   features: {}, featureNotes: {}, tires: [],
-  description: "", imageUrls: [], status: "draft", featured: false,
+  description: "", imageUrls: [], status: "draft", featured: false, heavyDamage: false,
 };
 const emptyPost: PostDraft = { title: "", slug: "", excerpt: "", content: "", coverImageUrl: "", published: false };
-const emptyLinks: Links = { instagram: "", facebook: "", youtube: "", arabam: "", sahibinden: "https://tmlmotors.sahibinden.com" };
+const emptyLinks: Links = { instagram: "", facebook: "", youtube: "", arabam: "", sahibinden: "https://tmlmotors.sahibinden.com", googleReview: "" };
 
 const fuelOptions = ["Benzin + LPG", "Benzin", "Dizel", "Hybrit", "Elektrik"];
 const driveOptions = ["Önden Çeker", "Arkadan İter", "4X2 Önden Çekiş", "4X2 Arkadan İtiş", "4X4", "4X4 AWD"];
@@ -64,7 +65,12 @@ const tabMeta: Record<AdminTab, { title: string; subtitle: string }> = {
   vehicles: { title: "Araç ilanları", subtitle: "Envanterinizi ekleyin, düzenleyin ve yayınlayın." },
   blog: { title: "Blog ve paylaşımlar", subtitle: "Tecrübelerinizi ve yazılarınızı yayınlayın." },
   ads: { title: "Reklam alanları", subtitle: "Sponsor reklamlarının sitede nerede görüneceğine siz karar verin." },
+  stats: { title: "İlan istatistikleri", subtitle: "Hangi ilan kaç kez görüntülendi, kim baktı, kim favoriye ekledi." },
+  sell: { title: "Aracımı sat talepleri", subtitle: "Değerleme formundan gelen talepleri takip edin ve arayın." },
+  reviews: { title: "Müşteri yorumları", subtitle: "Yorumları onaylayın, yanıtlayın veya gizleyin." },
+  dealers: { title: "Anlaşmalı galericiler", subtitle: "Üyeleri galerici olarak işaretleyin ve işletme profillerini yönetin." },
   notifications: { title: "Bildirimler", subtitle: "Ziyaretçilerin beğeni ve kaydetme etkileşimleri." },
+  announcements: { title: "Duyurular", subtitle: "Aradığınız araçları duyurun; tüm kayıtlı kullanıcılara bildirim ve e-posta gitsin." },
   complaints: { title: "İlan şikayetleri", subtitle: "Ziyaretçilerin ilanlarınız hakkında ilettiği şikayetleri yanıtlayın." },
   messages: { title: "Ziyaretçi mesajları", subtitle: "İletişim sayfasından gelen dilek, öneri ve sorular." },
   links: { title: "Site bağlantıları", subtitle: "Sosyal medya ve ilan sitesi profilleriniz." },
@@ -144,6 +150,7 @@ export default function AdminPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const businessBadges = useBusinessBadges(user && authorized ? user : null, tab);
 
   async function loadAll(token: string) {
     const [vehicleResult, postResult, catalogResult, notificationResult, adResult, settingsResult, complaintResult, messageResult] = await Promise.all([
@@ -224,6 +231,29 @@ export default function AdminPage() {
       window.clearInterval(interval);
     };
   }, [authorized, user]);
+
+  // Bildirim ve mesaj sekmesi açık kalınca okunmamışlar kısa süre sonra otomatik okundu olur.
+  const hasUnreadNotifications = notifications.some((item) => !item.read);
+  const hasUnreadMessages = messages.some((item) => !item.read);
+  useEffect(() => {
+    if (!authorized || !user) return;
+    const target = tab === "notifications" && hasUnreadNotifications ? "notifications" : tab === "messages" && hasUnreadMessages ? "messages" : null;
+    if (!target) return;
+    const timer = window.setTimeout(async () => {
+      try {
+        await requestApi(`/api/admin/${target}`, await user.getIdToken(), "PATCH", { all: true });
+        if (target === "notifications") {
+          setNotifications((current) => current.map((item) => ({ ...item, read: true })));
+          setUnreadCount(0);
+        } else {
+          setMessages((current) => current.map((item) => ({ ...item, read: true })));
+        }
+      } catch {
+        // Otomatik işaretleme başarısız olursa "Okundu işaretle" düğmeleri kullanılabilir kalır.
+      }
+    }, 1800);
+    return () => window.clearTimeout(timer);
+  }, [authorized, user, tab, hasUnreadNotifications, hasUnreadMessages]);
 
   useEffect(() => {
     if (!successMessage) return;
@@ -461,6 +491,13 @@ export default function AdminPage() {
       { id: "vehicles", label: "Araç ilanları", icon: <Car size={18} /> },
       { id: "blog", label: "Blog ve paylaşımlar", icon: <FileText size={18} /> },
     ] },
+    { group: "Müşteri ilişkileri", items: [
+      { id: "sell", label: "Aracımı sat talepleri", icon: <Car size={18} />, badge: businessBadges.sell },
+      { id: "reviews", label: "Müşteri yorumları", icon: <Star size={18} />, badge: businessBadges.reviews },
+      { id: "stats", label: "İlan istatistikleri", icon: <Eye size={18} /> },
+      { id: "dealers", label: "Anlaşmalı galericiler", icon: <Building2 size={18} /> },
+      { id: "announcements", label: "Duyurular", icon: <Megaphone size={18} /> },
+    ] },
     { group: "Gelir", items: [{ id: "ads", label: "Reklam alanları", icon: <Megaphone size={18} /> }] },
     { group: "Topluluk ve ayarlar", items: [
       { id: "notifications", label: "Bildirimler", icon: <Bell size={18} />, badge: unreadCount },
@@ -585,7 +622,7 @@ export default function AdminPage() {
                 <article className="adm-row" key={item.id}>
                   <Thumb url={item.imageUrls?.[0]} large />
                   <div className="adm-row-info">
-                    <div className="adm-row-title"><b>{item.title || `${item.brand} ${item.model}`}</b>{item.featured ? <span className="adm-pill gold"><Star size={11} /> Öne çıkan</span> : null}</div>
+                    <div className="adm-row-title"><b>{item.title || `${item.brand} ${item.model}`}</b>                    {item.featured ? <span className="adm-pill gold"><Star size={11} /> Öne çıkan</span> : null}{item.heavyDamage ? <span className="adm-pill amber">Ağır hasarlı</span> : null}</div>
                     <small>{item.year} · {item.mileage?.toLocaleString("tr-TR")} km · {item.fuel || "Yakıt belirtilmemiş"} · {item.price ? `${item.price.toLocaleString("tr-TR")} TL` : "Fiyat için arayın"}</small>
                   </div>
                   <span className={`adm-pill ${statusTones[item.status]}`}>{statusLabels[item.status]}</span>
@@ -688,7 +725,8 @@ export default function AdminPage() {
                 <header className="adm-card-head"><div><span className="adm-step">8</span><h2>Yayın ve fotoğraflar</h2></div></header>
                 <div className="adm-grid">
                   <label className="adm-field">İlan durumu<select value={vehicle.status} onChange={(event) => setVehicle({ ...vehicle, status: event.target.value as ListingStatus })}><option value="draft">Taslak</option><option value="published">Yayında</option><option value="sold">Satıldı</option></select></label>
-                  <label className="adm-check"><input type="checkbox" checked={vehicle.featured} onChange={(event) => setVehicle({ ...vehicle, featured: event.target.checked })} /> Ana sayfada öne çıkar</label>
+                  <label className="adm-check"><input type="checkbox" checked={vehicle.featured && !vehicle.heavyDamage} disabled={vehicle.heavyDamage} onChange={(event) => setVehicle({ ...vehicle, featured: event.target.checked })} /> Ana sayfada öne çıkar</label>
+                  <label className="adm-check adm-check-warn"><input type="checkbox" checked={vehicle.heavyDamage ?? false} onChange={(event) => setVehicle({ ...vehicle, heavyDamage: event.target.checked, featured: event.target.checked ? false : vehicle.featured })} /> Ağır hasarlı araç <small className="adm-hint">İşaretlenirse ilan normal ilanlarda değil, “Hasarlı Araçlar” sayfasında listelenir.</small></label>
                 </div>
                 <div className="adm-field">Araç fotoğrafları <small className="adm-hint">En fazla 20 fotoğraf, her biri en fazla 8 MB.</small>
                   <span className="adm-upload"><ImagePlus size={22} />{uploading ? "Görseller yükleniyor..." : "Fotoğrafları seçin"}<input type="file" accept="image/*" multiple disabled={uploading} onChange={(event) => { void handleVehicleImages(event.target.files); event.target.value = ""; }} /></span>
@@ -754,6 +792,12 @@ export default function AdminPage() {
               <AdManager error={errorMessage} success={successMessage} ads={ads} draft={ad} setDraft={setAd} saving={saving} uploading={uploading} onSave={(draft) => void saveAd(draft)} onDelete={(id) => void deleteAd(id)} onUpload={(file) => runUpload(file, "ads")} />
             </div>
           ) : null}
+
+          {user && tab === "stats" ? <StatsPanel user={user} /> : null}
+          {user && tab === "sell" ? <SellRequestsPanel user={user} /> : null}
+          {user && tab === "reviews" ? <ReviewsPanel user={user} /> : null}
+          {user && tab === "dealers" ? <DealersPanel user={user} /> : null}
+          {user && tab === "announcements" ? <AnnouncementsPanel user={user} /> : null}
 
           {tab === "notifications" ? (
             <section className="adm-card">
@@ -831,7 +875,7 @@ export default function AdminPage() {
               <section className="adm-card">
                 <header className="adm-card-head"><div><h2>Sosyal medya ve ilan profilleri</h2><p>Bu bağlantılar sitenin alt bölümünde ikonlarla gösterilir.</p></div></header>
                 <div className="adm-grid">
-                  {(Object.keys(links) as (keyof Links)[]).map((key) => <Field key={key} label={{ instagram: "Instagram", facebook: "Facebook", youtube: "YouTube", arabam: "arabam.com", sahibinden: "sahibinden.com" }[key]} placeholder="https://" value={links[key]} onChange={(value) => setLinks({ ...links, [key]: value })} />)}
+                  {(Object.keys(links) as (keyof Links)[]).map((key) => <Field key={key} label={{ instagram: "Instagram", facebook: "Facebook", youtube: "YouTube", arabam: "arabam.com", sahibinden: "sahibinden.com", googleReview: "Google yorum bağlantısı" }[key]} placeholder="https://" value={links[key]} onChange={(value) => setLinks({ ...links, [key]: value })} />)}
                 </div>
               </section>
               <div className="adm-save-bar"><button className="adm-btn primary" onClick={() => void saveLinks()} disabled={saving}><Save size={16} /> {saving ? "Kaydediliyor..." : "Bağlantıları kaydet"}</button></div>

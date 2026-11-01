@@ -8,12 +8,13 @@ import { getPublishedBlogPosts, type BlogPost } from "@/lib/blog-service";
 import { BlogEngagement } from "@/components/blog-engagement";
 import { BlogAuthor } from "@/components/blog-author";
 import { AdSlot } from "@/components/ad-slot";
+import { plainText } from "@/lib/blog-content";
 import { Loading } from "@/components/loading";
 import { usePreferences } from "@/lib/i18n/preferences-context";
 
 function excerptOf(post: BlogPost): string {
-  if (post.excerpt.trim()) return post.excerpt;
-  return post.content.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  if (post.excerpt.trim()) return plainText(post.excerpt);
+  return plainText(post.content.replace(/<[^>]+>/g, " "));
 }
 
 export default function BlogPage() {
@@ -21,7 +22,7 @@ export default function BlogPage() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
-  const { t } = usePreferences();
+  const { language, t } = usePreferences();
 
   useEffect(() => {
     if (!firebaseStatus.ready) {
@@ -60,7 +61,7 @@ export default function BlogPage() {
     <>
       <section className="subpage-hero">
         <div className="container">
-          <span className="eyebrow eyebrow-light">TML MOTORS NOTLARI</span>
+          <span className="eyebrow eyebrow-light">{t("blog").toLocaleUpperCase(language)}</span>
           <h1>{t("blogHeroTitleA")}<br />{t("blogHeroTitleB")}</h1>
           <p>{t("blogHeroText")}</p>
         </div>

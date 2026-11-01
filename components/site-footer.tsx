@@ -45,6 +45,12 @@ export function SiteFooter() {
         <div className="footer-col">
           <h3>TML MOTORS</h3>
           <Link href="/araclar">{t("footerConsulting")}</Link>
+          <Link href="/hasarli-araclar">Hasarlı araçlar</Link>
+          <Link href="/aracimi-sat">Aracımı sat</Link>
+          <Link href="/galericiler">Anlaşmalı galericiler</Link>
+          <Link href="/duyurular">Duyurular</Link>
+          <Link href="/yorumlar">Müşteri yorumları</Link>
+          <Link href="/sss">Sıkça sorulan sorular</Link>
           <Link href="/blog">{t("footerGuide")}</Link>
           <Link href="/iletisim">{t("contact")}</Link>
           {links.sahibinden ? <a href={links.sahibinden} target="_blank" rel="noreferrer">{t("footerListings")} <ArrowUpRight size={14} /></a> : null}
@@ -56,6 +62,14 @@ export function SiteFooter() {
           <span>Günsev Oto AVM, Gaziantep</span>
           <span>{t("licenseLabel")}: 2701072</span>
         </div>
+      </div>
+      <div className="container footer-legal">
+        <p className="footer-no-pay">TML MOTORS hiçbir hizmet için ödeme istemez. Kapora, rezervasyon veya havale talep eden mesajlara itibar etmeyin ve bize bildirin.</p>
+        <nav aria-label="Yasal bağlantılar">
+          <Link href="/kvkk">KVKK Aydınlatma Metni</Link>
+          <Link href="/cerez-politikasi">Çerez Politikası</Link>
+          <Link href="/kullanim-kosullari">Kullanım Koşulları</Link>
+        </nav>
       </div>
       <div className="container footer-bottom">
         <span>© {new Date().getFullYear()} TML MOTORS. {t("footerRights")}</span>

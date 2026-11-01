@@ -28,7 +28,6 @@ export function BlogEngagement({ slug, title }: { slug: string; title: string })
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<"like" | "save" | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
-  const [notice, setNotice] = useState("");
 
   useEffect(() => {
     if (!firebaseStatus.ready) {
@@ -77,7 +76,6 @@ export function BlogEngagement({ slug, title }: { slug: string; title: string })
     const enabled = type === "like" ? !engagement.liked : !engagement.saved;
     setSaving(type);
     setErrorMessage("");
-    setNotice("");
     try {
       const response = await fetch(`/api/blog/${encodeURIComponent(slug)}/engagement`, {
         method: "POST",
@@ -93,9 +91,6 @@ export function BlogEngagement({ slug, title }: { slug: string; title: string })
         liked: type === "like" ? enabled : current.liked,
         saved: type === "save" ? enabled : current.saved,
       }));
-      setNotice(type === "like"
-        ? enabled ? t("likeSaved") : t("likeRemoved")
-        : enabled ? t("saveAdded") : t("saveRemoved"));
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "İşleminiz kaydedilemedi.");
     } finally {
@@ -134,7 +129,6 @@ export function BlogEngagement({ slug, title }: { slug: string; title: string })
         {!user && authReady ? <Link className="engagement-login" href="/giris">{t("engagementLogin")}</Link> : null}
       </div>
       {errorMessage ? <p className="engagement-feedback is-error" role="status">{errorMessage}</p> : null}
-      {notice ? <p className="engagement-feedback" role="status">{notice}</p> : null}
       {!firebaseStatus.ready ? <p className="engagement-feedback">{t("engagementUnavailable")}</p> : null}
     </div>
   );

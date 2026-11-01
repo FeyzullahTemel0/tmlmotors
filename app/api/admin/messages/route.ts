@@ -37,6 +37,14 @@ export async function PATCH(request: Request) {
   try {
     await requireAdmin(request);
     const body: unknown = await request.json();
+    if ((body as Record<string, unknown> | null)?.all === true) {
+      const db = getAdminDb();
+      const unread = await db.collection("contactMessages").where("read", "==", false).limit(400).get();
+      const batch = db.batch();
+      unread.docs.forEach((document) => batch.update(document.ref, { read: true }));
+      if (!unread.empty) await batch.commit();
+      return NextResponse.json({ updated: unread.size });
+    }
     const id = cleanText((body as Record<string, unknown> | null)?.id, 128);
     if (!id) throw new InputError("İşaretlenecek mesaj seçilmedi.");
     const reference = getAdminDb().collection("contactMessages").doc(id);

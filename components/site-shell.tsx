@@ -5,6 +5,8 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { AdSlot } from "@/components/ad-slot";
 import { MobileTabBar } from "@/components/mobile-tab-bar";
+import { CompareBar } from "@/components/compare-bar";
+import { CookieNotice } from "@/components/cookie-notice";
 
 export function SiteShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -16,6 +18,8 @@ export function SiteShell({ children }: { children: React.ReactNode }) {
       <main>{children}</main>
       <div className="container ad-band ad-band-footer"><AdSlot placement="footer-strip" /></div>
       <SiteFooter />
+      <CompareBar />
+      <CookieNotice />
       <MobileTabBar />
     </>
   );

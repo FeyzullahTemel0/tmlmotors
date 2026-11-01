@@ -2,7 +2,7 @@
 import { FieldValue } from "firebase-admin/firestore";
 import { apiError, getAdminDb, InputError, requireAdmin } from "@/lib/firebase-admin";
 
-const allowedKeys = ["instagram", "facebook", "youtube", "arabam", "sahibinden"] as const;
+const allowedKeys = ["instagram", "facebook", "youtube", "arabam", "sahibinden", "googleReview"] as const;
 
 export async function GET() {
   try {

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import crypto from "node:crypto";
-import { apiError, requireAdmin, requireAuthenticatedUser } from "@/lib/firebase-admin";
+import { apiError, getAdminDb, requireAdmin, requireAuthenticatedUser } from "@/lib/firebase-admin";
 
 export async function POST(request: Request) {
   try {
@@ -18,6 +18,10 @@ export async function POST(request: Request) {
     let folder: string;
     if (category === "profile") {
       folder = `tml-motors/profiles/${user.uid}`;
+    } else if (category === "dealer") {
+      const dealer = await getAdminDb().collection("dealers").doc(user.uid).get();
+      if (!dealer.exists || dealer.data()?.active !== true) return NextResponse.json({ error: "Galerici profili etkin değil." }, { status: 403 });
+      folder = `tml-motors/dealers/${user.uid}`;
     } else if (category === "vehicles" || category === "blog" || category === "ads") {
       await requireAdmin(request);
       folder = `tml-motors/${category}`;

@@ -6,7 +6,7 @@ import { useParams } from "next/navigation";
 import { ArrowLeft, CalendarDays, Clock, Phone } from "lucide-react";
 import { getFirebaseConnectionStatus } from "@/lib/firebase-client";
 import { getPublishedBlogPosts, getPublishedBlogPostBySlug, type BlogPost } from "@/lib/blog-service";
-import { estimateReadingMinutes } from "@/lib/blog-content";
+import { estimateReadingMinutes, plainText } from "@/lib/blog-content";
 import { BlogContent } from "@/components/blog-content";
 import { BlogEngagement } from "@/components/blog-engagement";
 import { BlogAuthor } from "@/components/blog-author";
@@ -107,10 +107,10 @@ export default function BlogArticlePage() {
         ) : post ? (
           <>
             <header className="post-header">
-              <span className="post-kicker">TML MOTORS NOTLARI</span>
+              <span className="post-kicker">{t("blog").toLocaleUpperCase(language)}</span>
               <BlogAuthor dateISO={post.createdAt} large />
               <h1>{post.title}</h1>
-              <p className="post-intro">{post.excerpt}</p>
+              <p className="post-intro">{plainText(post.excerpt)}</p>
               <div className="post-meta">
                 {post.createdAt ? <span><CalendarDays size={15} /> {fullDate(post.createdAt, language)}</span> : null}
                 <span><Clock size={15} /> {t("minutesRead").replace("{min}", String(estimateReadingMinutes(post.content)))}</span>
