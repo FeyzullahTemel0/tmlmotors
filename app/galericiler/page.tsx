@@ -28,7 +28,7 @@ export default async function DealersPage() {
   const dealers = await loadDealers();
   return (
     <>
-      <section className="subpage-hero"><div className="container">
+      <section className="subpage-hero hero-hide-mobile"><div className="container">
         <span className="eyebrow eyebrow-light">ANLAŞMALI GALERİCİLER</span>
         <h1>Güvendiğimiz oto galerici ortaklarımız</h1>
         <p>TML MOTORS ile birlikte çalışan işletmeleri, fotoğraflarını ve ilan profillerini bu sayfadan inceleyebilirsiniz.</p>

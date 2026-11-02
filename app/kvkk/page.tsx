@@ -11,7 +11,7 @@ export default function KvkkPage() {
   return (
     <LegalPage eyebrow="KVKK" title="Kişisel Verilerin Korunması Aydınlatma Metni" intro="6698 sayılı Kişisel Verilerin Korunması Kanunu kapsamında verilerinizin nasıl işlendiğini şeffaf biçimde açıklıyoruz." updated="Kasım 2026">
       <h2>1. Veri sorumlusu</h2>
-      <p>Kişisel verileriniz, veri sorumlusu sıfatıyla TML MOTORS (işletme sahibi: Muhammed Emin TEMEL, Yetki Belge No: 2701072) tarafından işlenmektedir. Adres: Günsev Oto AVM, Gaziantep. Telefon: +90 553 578 11 36.</p>
+      <p>Kişisel verileriniz, veri sorumlusu sıfatıyla TML MOTORS (işletme sahibi: Muhammed Emin TEMEL, Yetki Belge No: 2701072) tarafından işlenmektedir. Adres: Karacaahmet Mah. 38087 Nolu Cd. Günsev Oto AVM No:5 İç Kapı No:139, 27000 Şehitkamil / Gaziantep. Telefon: +90 553 578 11 36.</p>
       <h2>2. İşlenen kişisel veriler</h2>
       <ul>
         <li><b>Kimlik ve iletişim:</b> ad soyad, telefon numarası, e-posta adresi, şehir.</li>

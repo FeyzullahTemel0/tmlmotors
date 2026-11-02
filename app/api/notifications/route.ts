@@ -33,7 +33,8 @@ export async function GET(request: Request) {
       const data = document.data();
       const createdAt = millis(data.createdAt);
       const criteria = describeCriteria({ brand: String(data.brand ?? ""), model: String(data.model ?? ""), bodyType: String(data.bodyType ?? ""), minPrice: typeof data.minPrice === "number" ? data.minPrice : null, maxPrice: typeof data.maxPrice === "number" ? data.maxPrice : null });
-      items.push({ id: `a_${document.id}`, kind: "announcement", title: String(data.title ?? ""), message: criteria || String(data.message ?? "").slice(0, 140), link: `/duyurular#${document.id}`, createdAt, unread: createdAt > lastReadAt });
+      const businessName = String(data.businessName ?? "");
+      items.push({ id: `a_${document.id}`, kind: "announcement", title: businessName ? `${businessName}: ${String(data.title ?? "")}` : String(data.title ?? ""), message: criteria || String(data.message ?? "").slice(0, 140), link: `/duyurular#${document.id}`, createdAt, unread: createdAt > lastReadAt });
     });
     complaints.docs.forEach((document) => {
       const data = document.data();

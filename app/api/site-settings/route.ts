@@ -4,10 +4,20 @@ import { apiError, getAdminDb, InputError, requireAdmin } from "@/lib/firebase-a
 
 const allowedKeys = ["instagram", "facebook", "youtube", "arabam", "sahibinden", "googleReview"] as const;
 
+const defaultLinks = {
+  sahibinden: "https://tmlmotors.sahibinden.com",
+  youtube: "https://www.youtube.com/channel/UCrQn4SQSus6h0HZshp58yDA",
+};
+
 export async function GET() {
   try {
     const snapshot = await getAdminDb().collection("siteSettings").doc("links").get();
-    return NextResponse.json({ links: snapshot.exists ? snapshot.data() : { sahibinden: "https://tmlmotors.sahibinden.com" } });
+    const stored = (snapshot.exists ? snapshot.data() : {}) as Record<string, unknown>;
+    const links: Record<string, unknown> = { ...stored };
+    for (const [key, value] of Object.entries(defaultLinks)) {
+      if (!links[key]) links[key] = value;
+    }
+    return NextResponse.json({ links });
   } catch (error) {
     const result = apiError(error);
     return NextResponse.json({ error: result.error }, { status: result.status });

@@ -6,7 +6,7 @@ import { usePreferences } from "@/lib/i18n/preferences-context";
 
 type PublicLinks = { instagram?: string; facebook?: string; youtube?: string; arabam?: string; sahibinden?: string };
 
-const mapSrc = "https://www.google.com/maps?q=G%C3%BCnsev%20Oto%20AVM%2C%20Gaziantep&output=embed";
+const mapSrc = "https://www.google.com/maps?q=Karacaahmet%20Mahallesi%2038087%20Nolu%20Cadde%20G%C3%BCnsev%20Oto%20AVM%20No%3A5%20%C5%9Eehitkamil%20Gaziantep&output=embed";
 
 export default function ContactPage() {
   const { t } = usePreferences();
@@ -73,11 +73,11 @@ export default function ContactPage() {
               </a>
               <div className="contact-card">
                 <span className="contact-card-icon"><MapPin size={20} /></span>
-                <div><b>{t("contactAddress")}</b><span>Günsev Oto AVM, Gaziantep</span><small>Şahinbey / Gaziantep</small></div>
+                <div><b>{t("contactAddress")}</b><span>Karacaahmet Mah. 38087 Nolu Cadde, Günsev Oto AVM No:5 İç Kapı No:139</span><small>27000 Şehitkamil / Gaziantep</small></div>
               </div>
               <div className="contact-card">
                 <span className="contact-card-icon"><User size={20} /></span>
-                <div><b>{t("contactOwner")}</b><span>Muhammed Emin TEMEL</span><small>Yetki Belge No: 2701072</small></div>
+                <div><b>{t("contactOwner")}</b><span>Muhammed Emin TEMEL</span><small>Kullanılmış Motorlu Kara Taşıtı Ticareti Yetki Belgesi sahibi</small><small>Yetki Belge No: 2701072</small></div>
               </div>
               <div className="contact-card">
                 <span className="contact-card-icon"><Clock size={20} /></span>

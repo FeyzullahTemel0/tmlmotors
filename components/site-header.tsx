@@ -48,6 +48,7 @@ export function SiteHeader() {
           <Link href="/araclar" onClick={() => setMenuOpen(false)}>{t("buySell")}</Link>
           <Link href="/hasarli-araclar" onClick={() => setMenuOpen(false)}>{t("navDamaged")}</Link>
           <Link href="/galericiler" onClick={() => setMenuOpen(false)}>{t("navDealers")}</Link>
+          <Link href="/duyurular" onClick={() => setMenuOpen(false)}>Duyurular</Link>
           <Link href="/blog" onClick={() => setMenuOpen(false)}>{t("navBlog")}</Link>
           <Link href="/iletisim" onClick={() => setMenuOpen(false)}>{t("contact")}</Link>
           {auth.signedIn

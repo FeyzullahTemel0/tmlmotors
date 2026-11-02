@@ -49,7 +49,7 @@ export default function RootLayout({
           telephone: "+905535781136",
           description: "Gaziantep Günsev Oto AVM'de araç alım satım danışmanlığı.",
           identifier: "Yetki Belge No: 2701072",
-          address: { "@type": "PostalAddress", streetAddress: "Günsev Oto AVM", addressLocality: "Gaziantep", addressCountry: "TR" },
+          address: { "@type": "PostalAddress", streetAddress: "Karacaahmet Mah. 38087 Nolu Cd. Günsev Oto AVM No:5 İç Kapı No:139", addressLocality: "Şehitkamil", addressRegion: "Gaziantep", postalCode: "27000", addressCountry: "TR" },
           sameAs: ["https://tmlmotors.sahibinden.com"],
         }} />
         <PreferencesProvider>

@@ -11,6 +11,13 @@ function text(value: unknown, max: number): string {
   return typeof value === "string" ? value.replace(/[ \t]+/g, " ").trim().slice(0, max) : "";
 }
 
+function normalizePhone(value: unknown): string {
+  const digits = typeof value === "string" ? value.replace(/\D/g, "") : "";
+  if (!digits) return "";
+  const international = digits.startsWith("90") && digits.length === 12 ? digits : digits.startsWith("0") && digits.length === 11 ? `9${digits}` : digits.length === 10 ? `90${digits}` : "";
+  return international;
+}
+
 function price(value: unknown, label: string): number | null {
   if (value === "" || value === null || value === undefined) return null;
   const number = Number(value);
@@ -24,7 +31,7 @@ export async function GET(request: Request) {
     const snapshot = await getAdminDb().collection("announcements").orderBy("createdAt", "desc").limit(100).get();
     const announcements = snapshot.docs.map((document) => {
       const data = document.data();
-      return { id: document.id, title: String(data.title ?? ""), message: String(data.message ?? ""), createdAt: millis(data.createdAt), emailSent: Number(data.emailSent ?? 0) };
+      return { id: document.id, title: String(data.title ?? ""), message: String(data.message ?? ""), createdAt: millis(data.createdAt), emailSent: Number(data.emailSent ?? 0), businessName: String(data.businessName ?? "") };
     });
     return NextResponse.json({ announcements, mailConfigured: await isMailConfigured() }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
@@ -60,13 +67,16 @@ export async function POST(request: Request) {
     const maxPrice = price(body?.maxPrice, "En yüksek fiyat");
     if (minPrice !== null && maxPrice !== null && minPrice > maxPrice) throw new InputError("En düşük fiyat, en yüksek fiyattan büyük olamaz.");
     const criteria = { brand: text(body?.brand, 60), model: text(body?.model, 80), bodyType: text(body?.bodyType, 40), minPrice, maxPrice };
+    const businessName = text(body?.businessName, 80);
+    const phone = businessName ? normalizePhone(body?.phone) : "";
+    if (businessName && body?.phone && !phone) throw new InputError("İletişim telefonu geçersiz.");
 
-    const reference = await getAdminDb().collection("announcements").add({ title, message, ...criteria, emailSent: 0, createdAt: FieldValue.serverTimestamp() });
+    const reference = await getAdminDb().collection("announcements").add({ title, message, ...criteria, businessName, phone, emailSent: 0, createdAt: FieldValue.serverTimestamp() });
 
     let mail = { configured: await isMailConfigured(), requested: body?.sendEmail !== false, sent: 0, failed: 0 };
     if (mail.requested && mail.configured) {
       const recipients = await emailRecipients();
-      const result = await sendBulkMail({ subject: `Yeni duyuru: ${title}`, heading: title, summary: describeCriteria(criteria), message, path: `/duyurular#${reference.id}` }, recipients);
+      const result = await sendBulkMail({ subject: `Yeni duyuru: ${businessName ? `${businessName} - ` : ""}${title}`, heading: title, summary: [businessName, describeCriteria(criteria)].filter(Boolean).join(" · "), message, path: `/duyurular#${reference.id}` }, recipients);
       mail = { ...mail, ...result };
       await reference.update({ emailSent: result.sent });
     }

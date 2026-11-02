@@ -49,7 +49,7 @@ export default function SellVehiclePage() {
 
   return (
     <>
-      <section className="subpage-hero"><div className="container">
+      <section className="subpage-hero hero-hide-mobile"><div className="container">
         <span className="eyebrow eyebrow-light">ARACIMI SAT</span>
         <h1>Aracınızın gerçek değerini birlikte belirleyelim</h1>
         <p>Formu doldurun, Gaziantep Günsev Oto AVM ekibimiz aracınızı değerlendirip size açık bir dönüş yapsın. Değerleme ücretsizdir ve bir yükümlülük doğurmaz.</p>

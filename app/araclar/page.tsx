@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
@@ -11,7 +11,7 @@ export default function VehiclesPage() {
 
   return (
     <>
-      <section className="subpage-hero inventory-hero"><div className="container">
+      <section className="subpage-hero inventory-hero hero-hide-mobile"><div className="container">
         <span className="eyebrow eyebrow-light">TML MOTORS · GAZİANTEP</span>
         <h1>{t("vehiclesHeroTitle")}</h1>
         <p>{t("vehiclesHeroText")}</p>

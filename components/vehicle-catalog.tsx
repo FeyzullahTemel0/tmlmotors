@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, ArrowUpRight, Search, SlidersHorizontal } from "lucide-react";
+import { ArrowLeft, ArrowRight, ArrowUpRight, ChevronDown, Search, SlidersHorizontal } from "lucide-react";
 import { formatMileage, type Vehicle } from "@/lib/vehicle-types";
 import { Loading } from "@/components/loading";
 import { usePreferences } from "@/lib/i18n/preferences-context";
@@ -12,6 +12,7 @@ export function VehicleCatalog({ featuredOnly = false, scope = "normal" }: { fea
   const { t } = usePreferences();
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
   const [query, setQuery] = useState("");
+  const [filtersOpen, setFiltersOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [makeFilter, setMakeFilter] = useState("");
@@ -83,8 +84,12 @@ export function VehicleCatalog({ featuredOnly = false, scope = "normal" }: { fea
   return (
     <>
       {!featuredOnly ? <div className="catalog-toolbar"><span>{loading ? t("loadingVehicles") : t("catalogCount").replace("{count}", String(filteredVehicles.length))}</span><label className="catalog-search"><Search size={16} /><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder={t("catalogSearchPlaceholder")} /></label></div> : null}
-      {!featuredOnly && !loading && !errorMessage && vehicles.length ? <div className="listing-filters">
-        <span><SlidersHorizontal size={16} /> {t("filterLabel")}</span>
+      {!featuredOnly && !loading && !errorMessage && vehicles.length ? <div className={filtersOpen ? "listing-filters is-open" : "listing-filters"}>
+        <button type="button" className="filter-toggle" aria-expanded={filtersOpen} onClick={() => setFiltersOpen((open) => !open)}>
+          <SlidersHorizontal size={16} /> {t("filterLabel")}
+          {[makeFilter, minimumPrice, maximumPrice, minimumYear].filter(Boolean).length ? <b className="filter-count">{[makeFilter, minimumPrice, maximumPrice, minimumYear].filter(Boolean).length}</b> : null}
+          <ChevronDown size={16} className="filter-chevron" />
+        </button>
         <select aria-label={t("allMakes")} value={makeFilter} onChange={(event) => setMakeFilter(event.target.value)}><option value="">{t("allMakes")}</option>{makes.map((make) => <option key={make} value={make}>{make}</option>)}</select>
         <input aria-label={t("minPrice")} type="number" min="0" placeholder={t("minPrice")} value={minimumPrice} onChange={(event) => setMinimumPrice(event.target.value)} />
         <input aria-label={t("maxPrice")} type="number" min="0" placeholder={t("maxPrice")} value={maximumPrice} onChange={(event) => setMaximumPrice(event.target.value)} />

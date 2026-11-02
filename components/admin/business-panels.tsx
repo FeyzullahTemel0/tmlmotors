@@ -272,9 +272,9 @@ export function ReviewsPanel({ user }: { user: User }) {
 
 /* ------------------------------------ Duyurular ------------------------------------ */
 
-type AdminAnnouncement = { id: string; title: string; message: string; createdAt: number; emailSent: number };
+type AdminAnnouncement = { id: string; title: string; message: string; createdAt: number; emailSent: number; businessName: string };
 type MailResult = { configured: boolean; requested: boolean; sent: number; failed: number };
-const emptyAnnouncement = { title: "", brand: "", model: "", bodyType: "", minPrice: "", maxPrice: "", message: "", sendEmail: true };
+const emptyAnnouncement = { businessName: "", phone: "", title: "", brand: "", model: "", bodyType: "", minPrice: "", maxPrice: "", message: "", sendEmail: true };
 
 type MailInfo = { configured: boolean; source: "panel" | "env" | null; host: string; port: number; user: string; from: string };
 
@@ -402,6 +402,8 @@ export function AnnouncementsPanel({ user }: { user: User }) {
         {result ? <div className="adm-alert is-success" role="status">{result}</div> : null}
         {!data.mailConfigured && !loading ? <div className="adm-alert is-error">E-posta ayarı yapılmadığı için duyurular yalnızca site içi bildirim olarak iletilir. Yukarıdaki karttan e-postayı kurabilirsiniz.</div> : null}
         <form className="form-grid" onSubmit={(event) => void publish(event)} style={{ padding: 16 }}>
+          <label className="form-field"><span>Yayınlayan işletme (boşsa TML MOTORS)</span><input maxLength={80} value={form.businessName} onChange={(event) => set("businessName", event.target.value)} placeholder="Başka bir galeri adına yayınlıyorsanız adını yazın" /></label>
+          <label className="form-field"><span>İletişim telefonu (başka işletme için)</span><input type="tel" inputMode="tel" maxLength={20} value={form.phone} disabled={!form.businessName.trim()} onChange={(event) => set("phone", event.target.value)} placeholder="05xx xxx xx xx, boşsa TML MOTORS numarası" /></label>
           <label className="form-field full"><span>Başlık</span><input required minLength={3} maxLength={120} value={form.title} onChange={(event) => set("title", event.target.value)} placeholder="Örn. 400-500 bin TL bandında SUV arıyoruz" /></label>
           <label className="form-field"><span>Marka (isteğe bağlı)</span><input maxLength={60} value={form.brand} onChange={(event) => set("brand", event.target.value)} /></label>
           <label className="form-field"><span>Model (isteğe bağlı)</span><input maxLength={80} value={form.model} onChange={(event) => set("model", event.target.value)} /></label>
@@ -421,7 +423,7 @@ export function AnnouncementsPanel({ user }: { user: User }) {
             {data.announcements.map((item) => (
               <article className="adm-row" key={item.id}>
                 <div className="adm-row-info">
-                  <div className="adm-row-title"><b>{item.title}</b>{item.emailSent ? <span className="adm-pill green">{item.emailSent} e-posta</span> : null}</div>
+                  <div className="adm-row-title"><b>{item.businessName ? `${item.businessName} · ` : ""}{item.title}</b>{item.emailSent ? <span className="adm-pill green">{item.emailSent} e-posta</span> : null}</div>
                   <small>{formatDate(item.createdAt)}</small>
                   <small style={{ whiteSpace: "pre-line" }}>{item.message.length > 160 ? `${item.message.slice(0, 160)}...` : item.message}</small>
                 </div>

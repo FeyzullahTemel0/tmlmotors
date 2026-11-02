@@ -8,7 +8,7 @@ import { AdSlot } from "@/components/ad-slot";
 export default function DamagedVehiclesPage() {
   return (
     <>
-      <section className="subpage-hero inventory-hero"><div className="container">
+      <section className="subpage-hero inventory-hero hero-hide-mobile"><div className="container">
         <span className="eyebrow eyebrow-light">TML MOTORS · HASAR KAYITLI ARAÇLAR</span>
         <h1>Ağır hasarlı araç alım satım</h1>
         <p>Hasar bilgisi saklanmadan, her ilanda neyin değiştiğini ve neyin onarıldığını açıkça paylaşıyoruz. Bu sayfadaki araçlar, normal ilanlarımızdan ayrı listelenir.</p>

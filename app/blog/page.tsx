@@ -64,7 +64,7 @@ export default function BlogPage() {
 
   return (
     <>
-      <section className="subpage-hero">
+      <section className="subpage-hero hero-hide-mobile">
         <div className="container">
           <span className="eyebrow eyebrow-light">{t("navBlog").toLocaleUpperCase(language)}</span>
           <h1>{t("blogHeroTitleA")}<br />{t("blogHeroTitleB")}</h1>

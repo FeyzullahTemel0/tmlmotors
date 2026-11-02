@@ -59,7 +59,7 @@ export function SiteFooter() {
         <div className="footer-col">
           <h3>{t("footerContact")}</h3>
           <a href="tel:+905535781136">+90 553 578 11 36</a>
-          <span>Günsev Oto AVM, Gaziantep</span>
+          <span>Karacaahmet Mah. 38087 Nolu Cd. Günsev Oto AVM No:5 İç Kapı No:139, 27000 Şehitkamil / Gaziantep</span>
           <span>{t("licenseLabel")}: 2701072</span>
         </div>
       </div>
@@ -72,8 +72,8 @@ export function SiteFooter() {
         </nav>
       </div>
       <div className="container footer-bottom">
-        <span>© {new Date().getFullYear()} TML MOTORS. {t("footerRights")}</span>
-        <span>{t("ownerLabel")}: Muhammed Emin TEMEL</span>
+        <span className="footer-copy">© {new Date().getFullYear()} TML MOTORS. {t("footerRights")}</span>
+        <span className="footer-credit">Bu sitenin yazılım desteği firmamız <a href="https://rovaxsoftware.com" target="_blank" rel="noreferrer">Rovax Software</a> tarafından yapılmıştır.</span>
       </div>
     </footer>
   );
