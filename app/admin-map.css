@@ -96,7 +96,7 @@
 }
 
 @media (max-width: 760px) {
-  html body .hero-layout { gap: 14px; padding-top: 16px; padding-bottom: 76px; }
+  html body .hero-layout { min-height: 0 !important; align-content: start; gap: 14px; padding-top: 16px; padding-bottom: 76px; }
   html body .hero h1 { margin: 8px 0 8px !important; font-size: 23px !important; line-height: 1.15 !important; }
   html body .hero-copy > p { font-size: 13px !important; line-height: 1.5 !important; }
   html body .hero-actions { gap: 10px; margin-top: 12px; }
@@ -110,7 +110,7 @@
 }
 
 @media (max-width: 760px) {
-  html body .hero-layout { gap: 12px; padding-top: 12px; padding-bottom: 70px; }
+  html body .hero-layout { min-height: 0 !important; align-content: start; gap: 12px; padding-top: 12px; padding-bottom: 70px; }
   html body .hero h1 { margin: 6px 0 6px !important; font-size: 20px !important; line-height: 1.15 !important; }
   html body .hero-copy > p { font-size: 12px !important; line-height: 1.45 !important; }
   html body .hero-copy .eyebrow { font-size: 9.5px !important; }
