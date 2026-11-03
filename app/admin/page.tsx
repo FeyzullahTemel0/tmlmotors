@@ -716,7 +716,7 @@ export default function AdminPage() {
                   <span className="adm-upload"><ImagePlus size={22} />{uploading ? "Görseller yükleniyor..." : "Fotoğrafları seçin"}<input type="file" accept="image/*" multiple disabled={uploading} onChange={(event) => { void handleVehicleImages(event.target.files); event.target.value = ""; }} /></span>
                 </div>
                 {vehicle.imageUrls.length ? <div className="adm-thumbs">{vehicle.imageUrls.map((url, index) => (
-                  <div key={url} className="adm-thumb-item"><img src={url} alt="Araç fotoğrafı" />{index === 0 ? <span className="adm-cover-tag">Kapak</span> : null}<button type="button" aria-label="Görseli kaldır" onClick={() => setVehicle({ ...vehicle, imageUrls: vehicle.imageUrls.filter((item) => item !== url) })}><X size={14} /></button></div>
+                  <div key={url} className="adm-thumb-item"><img src={url} alt="Araç fotoğrafı" />{index === 0 ? <span className="adm-cover-tag">Kapak</span> : <button type="button" className="adm-make-cover" onClick={() => setVehicle({ ...vehicle, imageUrls: [url, ...vehicle.imageUrls.filter((item) => item !== url)] })}>Kapak yap</button>}<button type="button" aria-label="Görseli kaldır" onClick={() => setVehicle({ ...vehicle, imageUrls: vehicle.imageUrls.filter((item) => item !== url) })}><X size={14} /></button></div>
                 ))}</div> : <p className="adm-hint">Yayındaki ilanlarda araç fotoğrafı kullanmanız önerilir. İlk fotoğraf kapak olarak gösterilir.</p>}
               </section>
             </div>
