@@ -5,5 +5,5 @@ export function getSiteUrl(): string {
   if (configured) return configured.replace(/\/$/, "");
   const vercelHost = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
   if (vercelHost) return `https://${vercelHost.replace(/^https?:\/\//, "").replace(/\/$/, "")}`;
-  return "http://localhost:3000";
+  return process.env.NODE_ENV === "production" ? "https://www.tmlmotors.com" : "http://localhost:3000";
 }
