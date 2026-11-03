@@ -639,8 +639,8 @@ export default function AdminPage() {
                 <div className="adm-grid">
                   <Field label="İlan başlığı (boşsa marka-model kullanılır)" value={vehicle.title} onChange={(value) => setVehicle({ ...vehicle, title: value })} />
                   <Field label="Model yılı" type="number" value={String(vehicle.year)} onChange={(value) => setVehicle({ ...vehicle, year: Number(value) })} />
-                  <Field label="Kilometre" type="number" value={String(vehicle.mileage)} onChange={(value) => setVehicle({ ...vehicle, mileage: Number(value) })} />
-                  <Field label="Fiyat (TL) — boşsa telefonla bilgi" type="number" value={vehicle.price === null ? "" : String(vehicle.price)} onChange={(value) => setVehicle({ ...vehicle, price: value ? Number(value) : null })} />
+                  <Field label="Kilometre" placeholder="Örn: 18.000" value={vehicle.mileage ? vehicle.mileage.toLocaleString("tr-TR") : ""} onChange={(value) => setVehicle({ ...vehicle, mileage: Number(value.replace(/\D/g, "")) })} />
+                  <Field label="Fiyat (TL) — boşsa telefonla bilgi" placeholder="Örn: 1.250.000" value={vehicle.price === null ? "" : vehicle.price.toLocaleString("tr-TR")} onChange={(value) => { const digits = value.replace(/\D/g, ""); setVehicle({ ...vehicle, price: digits ? Number(digits) : null }); }} />
                   <Field label="Sahibinden.com ilan linki (isteğe bağlı)" placeholder="https://www.sahibinden.com/ilan/..." value={vehicle.sahibindenUrl ?? ""} onChange={(value) => setVehicle({ ...vehicle, sahibindenUrl: value })} />
                 </div>
               </section>
