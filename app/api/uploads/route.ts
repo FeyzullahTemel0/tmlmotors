@@ -3,7 +3,8 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { apiError, getAdminDb, requireAdmin, requireAuthenticatedUser } from "@/lib/firebase-admin";
-import { getR2Client, r2Bucket, r2PublicBaseUrl } from "@/lib/r2";
+import { getR2Client, r2Bucket } from "@/lib/r2";
+import { getSiteUrl } from "@/lib/site-url";
 
 export const runtime = "nodejs";
 
@@ -53,7 +54,7 @@ export async function POST(request: Request) {
       ContentType: contentType,
     });
     const uploadUrl = await getSignedUrl(getR2Client(), command, { expiresIn: 60 });
-    const publicUrl = `${r2PublicBaseUrl}/${key.split("/").map(encodeURIComponent).join("/")}`;
+    const publicUrl = `${getSiteUrl()}/media/${key.split("/").map(encodeURIComponent).join("/")}`;
     return NextResponse.json({ uploadUrl, publicUrl });
   } catch (error) {
     const result = apiError(error);

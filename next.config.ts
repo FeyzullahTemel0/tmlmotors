@@ -2,6 +2,10 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  async rewrites() {
+    const r2Base = (process.env.R2_PUBLIC_BASE_URL || "https://pub-c5285a8590b045beb5f478d2bb3247aa.r2.dev").replace(/\/+$/, "");
+    return [{ source: "/media/:path*", destination: `${r2Base}/:path*` }];
+  },
   async headers() {
     return [{
       source: "/:path*",

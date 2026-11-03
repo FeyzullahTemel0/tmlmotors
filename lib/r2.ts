@@ -1,4 +1,5 @@
 import { S3Client } from "@aws-sdk/client-s3";
+import { getSiteUrl } from "@/lib/site-url";
 
 const accountId = process.env.R2_ACCOUNT_ID || "623839c9553455611293d8138ad58488";
 
@@ -22,9 +23,10 @@ export function getR2Client(): S3Client {
 export function isAllowedUploadedImageUrl(value: string): boolean {
   try {
     const url = new URL(value);
-    return url.protocol === "https:"
-      && url.hostname === new URL(r2PublicBaseUrl).hostname
-      && url.pathname.length > 1;
+    if (url.protocol !== "https:" || url.pathname.length <= 1) return false;
+    const siteHost = new URL(getSiteUrl()).hostname;
+    return url.hostname === new URL(r2PublicBaseUrl).hostname
+      || ((url.hostname === siteHost || url.hostname === `www.${siteHost}` || `www.${url.hostname}` === siteHost) && url.pathname.startsWith("/media/"));
   } catch {
     return false;
   }
