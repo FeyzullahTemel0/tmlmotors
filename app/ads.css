@@ -4,11 +4,11 @@
 .ad-inline { margin-top: 36px; }
 .ad-inline:empty { display: none; }
 .ad-band-footer { padding-top: 48px; padding-bottom: 56px; }
-.listing-section .ad-slot-row { margin-bottom: 32px; }
-.ad-slot { width: 100%; animation: ad-in .35s ease both; }
+.listing-section .promo-slot-row { margin-bottom: 32px; }
+.promo-slot { width: 100%; animation: ad-in .35s ease both; }
 @keyframes ad-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: reduce) { .ad-slot { animation: none; } }
-.ad-slot a { display: block; color: inherit; text-decoration: none; }
+@media (prefers-reduced-motion: reduce) { .promo-slot { animation: none; } }
+.promo-slot a { display: block; color: inherit; text-decoration: none; }
 
 /* Yatay reklamlar: 1 reklam tam genişlik, 2-4 reklam eşit genişlikte yan yana */
 .ad-grid-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
@@ -31,10 +31,10 @@
   .ad-band { padding-block: 28px; }
   .ad-band-footer { padding-top: 44px; padding-bottom: 48px; }
 }
-.ad-slot a:focus-visible { outline: 3px solid rgba(189,154,104,.6); outline-offset: 3px; border-radius: 14px; }
+.promo-slot a:focus-visible { outline: 3px solid rgba(189,154,104,.6); outline-offset: 3px; border-radius: 14px; }
 
 .ad-creative { position: relative; display: flex; width: 100%; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; color: #1b1b19; background: #fff; box-shadow: var(--shadow-sm); transition: box-shadow .25s ease, transform .25s ease; }
-.ad-slot a:hover .ad-creative { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.promo-slot a:hover .ad-creative { box-shadow: var(--shadow-md); transform: translateY(-2px); }
 .ad-creative.has-image { isolation: isolate; border: 1px solid var(--line); background: #ecebe6; }
 .ad-creative.has-image::before { content: ""; position: absolute; inset: -24px; z-index: -1; background: var(--ad-img) center / cover; filter: blur(22px) saturate(1.15); transform: scale(1.05); opacity: .85; }
 .ad-creative.has-image img { display: block; width: 100%; height: 100%; object-fit: contain; }
@@ -57,19 +57,19 @@
 .listing-with-aside, .article-grid { display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
 .listing-aside, .article-aside { display: block; }
 .listing-aside:empty, .article-aside:empty { display: none; }
-.listing-aside .ad-slot, .article-aside .ad-slot { margin-inline: auto; }
-.vehicle-detail-copy .ad-slot { max-width: 240px; margin-top: 22px; }
-.vehicle-detail-copy:has(.ad-slot) { position: static; }
+.listing-aside .promo-slot, .article-aside .promo-slot { margin-inline: auto; }
+.vehicle-detail-copy .promo-slot { max-width: 240px; margin-top: 22px; }
+.vehicle-detail-copy:has(.promo-slot) { position: static; }
 @media (min-width: 1280px) {
   .listing-with-aside { grid-template-columns: minmax(0, 1fr) 240px; }
   .article-grid { grid-template-columns: minmax(0, 860px) 240px; justify-content: center; gap: 48px; }
   .listing-aside, .article-aside { display: block; }
-  .listing-aside .ad-slot, .article-aside .ad-slot { position: sticky; top: 130px; }
+  .listing-aside .promo-slot, .article-aside .promo-slot { position: sticky; top: 130px; }
 }
 /* Telefonda ince bannerlar okunmaz hâle gelmesin diye alan yüksekliği korunur, görsel sığdırılır */
 @media (max-width: 680px) {
   .ad-creative-copy { padding: 12px 40px 12px 14px; }
   .ad-creative-copy b { font-size: 15px; }
-  .ad-slot-row .ad-creative.has-image { aspect-ratio: auto !important; height: 76px; }
-  .ad-slot-row .ad-creative-tag { top: 6px; right: 6px; padding: 1px 7px; font-size: 10px; }
+  .promo-slot-row .ad-creative.has-image { aspect-ratio: auto !important; height: 76px; }
+  .promo-slot-row .ad-creative-tag { top: 6px; right: 6px; padding: 1px 7px; font-size: 10px; }
 }
