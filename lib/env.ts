@@ -28,20 +28,3 @@ export function getFirebaseEnvErrorMessage(): string {
 
   return `Firebase bağlantısı için eksik ortam değişkenleri: ${missing.join(", ")}`;
 }
-
-export function getCloudinaryEnvErrorMessage(): string {
-  const cloudinaryEnvValues = {
-    NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
-    NEXT_PUBLIC_CLOUDINARY_API_KEY: process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY,
-    CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET,
-  };
-  const missing = Object.entries(cloudinaryEnvValues).filter(([, value]) => {
-    return !value || value.trim().length === 0;
-  }).map(([key]) => key);
-
-  if (missing.length === 0) {
-    return "";
-  }
-
-  return `Cloudinary bağlantısı için eksik ortam değişkenleri: ${missing.join(", ")}`;
-}

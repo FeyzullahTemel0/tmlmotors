@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import type { User } from "firebase/auth";
 import { ArrowUpRight, Camera, Save, X } from "lucide-react";
 import { Loading } from "@/components/loading";
+import { uploadImageToR2 } from "@/lib/r2-upload";
 
 type Dealer = {
   businessName: string; slug: string; about: string; phone: string; city: string; address: string;
@@ -38,26 +39,7 @@ export function useIsDealer(user: User | null): boolean {
 }
 
 async function uploadDealerPhoto(file: File, user: User): Promise<string> {
-  if (!file.type.startsWith("image/")) throw new Error("Yalnızca görsel dosyaları yüklenebilir.");
-  if (file.size > 8 * 1024 * 1024) throw new Error("Her fotoğraf en fazla 8 MB olabilir.");
-  const signatureResponse = await fetch("/api/cloudinary/signature", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${await user.getIdToken()}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ category: "dealer" }),
-  });
-  const signature = await signatureResponse.json();
-  if (!signatureResponse.ok) throw new Error(signature.error ?? "Yükleme imzası alınamadı.");
-  const formData = new FormData();
-  formData.set("file", file);
-  formData.set("api_key", signature.apiKey);
-  formData.set("timestamp", String(signature.timestamp));
-  formData.set("signature", signature.signature);
-  formData.set("folder", signature.folder);
-  const uploadResponse = await fetch(`https://api.cloudinary.com/v1_1/${signature.cloudName}/image/upload`, { method: "POST", body: formData });
-  const uploaded = await uploadResponse.json();
-  if (!uploadResponse.ok) throw new Error(uploaded.error?.message ?? "Fotoğraf yüklenemedi.");
-  if (typeof uploaded.secure_url !== "string") throw new Error("Fotoğraf adresi alınamadı.");
-  return uploaded.secure_url;
+  return uploadImageToR2(file, "dealer", user);
 }
 
 export function DealerProfileEditor({ user }: { user: User }) {

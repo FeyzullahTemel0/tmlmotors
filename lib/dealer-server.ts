@@ -1,4 +1,5 @@
 import { InputError } from "@/lib/firebase-admin";
+import { isAllowedUploadedImageUrl } from "@/lib/r2";
 
 export type DealerProfile = {
   businessName: string;
@@ -61,7 +62,7 @@ export function validateDealerProfile(body: Record<string, unknown> | null, uid:
   const photosInput = Array.isArray(body.photos) ? body.photos : [];
   const photos = photosInput.filter((item): item is string => typeof item === "string").map((item) => item.trim());
   if (photos.length > 5) throw new InputError("En fazla 5 fotoğraf ekleyebilirsiniz.");
-  if (photos.some((photo) => !photo.startsWith("https://res.cloudinary.com/"))) throw new InputError("Fotoğraflar yalnızca site üzerinden yüklenebilir.");
+  if (photos.some((photo) => !isAllowedUploadedImageUrl(photo))) throw new InputError("Fotoğraflar yalnızca site üzerinden yüklenebilir.");
 
   const links = {} as Record<string, string>;
   for (const rule of linkRules) links[rule.key] = cleanUrl(body[rule.key], rule.label, rule.hosts);

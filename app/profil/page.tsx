@@ -16,32 +16,7 @@ import { Loading } from "@/components/loading";
 import { plainText } from "@/lib/blog-content";
 import { currencyOptions, languages } from "@/lib/i18n/translations";
 import { usePreferences } from "@/lib/i18n/preferences-context";
-
-async function uploadAvatarToCloudinary(file: File, user: User): Promise<string> {
-  if (!file.type.startsWith("image/")) throw new Error("Yalnızca görsel dosyaları yüklenebilir.");
-  if (file.size > 5 * 1024 * 1024) throw new Error("Profil fotoğrafı en fazla 5 MB olabilir.");
-
-  const token = await user.getIdToken();
-  const signatureResponse = await fetch("/api/cloudinary/signature", {
-    method: "POST",
-    headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ category: "profile" }),
-  });
-  const signatureData = await signatureResponse.json();
-  if (!signatureResponse.ok) throw new Error(signatureData.error ?? "Cloudinary imzası alınamadı.");
-
-  const formData = new FormData();
-  formData.set("file", file);
-  formData.set("api_key", signatureData.apiKey);
-  formData.set("timestamp", String(signatureData.timestamp));
-  formData.set("signature", signatureData.signature);
-  formData.set("folder", signatureData.folder);
-  const uploadResponse = await fetch(`https://api.cloudinary.com/v1_1/${signatureData.cloudName}/image/upload`, { method: "POST", body: formData });
-  const uploadData = await uploadResponse.json();
-  if (!uploadResponse.ok) throw new Error(uploadData.error?.message ?? "Profil fotoğrafı yüklenemedi.");
-  if (typeof uploadData.secure_url !== "string") throw new Error("Cloudinary görsel adresi dönmedi.");
-  return uploadData.secure_url;
-}
+import { uploadImageToR2 } from "@/lib/r2-upload";
 
 type UserComplaint = {
   id: string; vehicleId: string; vehicleTitle: string; message: string;
@@ -199,7 +174,7 @@ export default function ProfilePage() {
       setSaving(true);
       setErrorMessage("");
       setSuccessMessage("");
-      const url = await uploadAvatarToCloudinary(file, user);
+      const url = await uploadImageToR2(file, "profile", user);
       await persistProfile({ avatarUrl: url });
       setAvatarUrl(url);
       setSuccessMessage(t("photoUploaded"));

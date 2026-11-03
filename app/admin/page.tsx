@@ -19,6 +19,7 @@ import type { Vehicle as VehicleRecord, VehicleDamagePart, VehicleTire } from "@
 import { featureCatalog, featureGroupKeys, featureGroupLabels, type FeatureGroupKey } from "@/lib/vehicle-features";
 import type { VehicleCatalog as VehicleCatalogType } from "@/lib/vehicle-catalog";
 import { blogCategories, normalizeBlogCategory } from "@/lib/blog-categories";
+import { uploadImageToR2 } from "@/lib/r2-upload";
 
 type AdminTab = "overview" | "vehicles" | "blog" | "ads" | "stats" | "sell" | "reviews" | "dealers" | "announcements" | "notifications" | "complaints" | "messages" | "links";
 type ContactMessage = {
@@ -93,25 +94,8 @@ async function requestApi<T>(url: string, token: string, method = "GET", body?: 
   return result as T;
 }
 
-async function uploadImage(file: File, category: "vehicles" | "blog" | "ads", token: string): Promise<string> {
-  if (!file.type.startsWith("image/")) throw new Error("Yalnızca görsel dosyaları yüklenebilir.");
-  if (file.size > 8 * 1024 * 1024) throw new Error("Görsel en fazla 8 MB olabilir.");
-
-  const signature = await requestApi<{ timestamp: number; signature: string; folder: string; apiKey: string; cloudName: string }>(
-    "/api/cloudinary/signature", token, "POST", { category },
-  );
-  const formData = new FormData();
-  formData.set("file", file);
-  formData.set("api_key", signature.apiKey);
-  formData.set("timestamp", String(signature.timestamp));
-  formData.set("signature", signature.signature);
-  formData.set("folder", signature.folder);
-
-  const response = await fetch(`https://api.cloudinary.com/v1_1/${signature.cloudName}/image/upload`, { method: "POST", body: formData });
-  const result = await response.json();
-  if (!response.ok) throw new Error(result.error?.message ?? "Görsel yüklenemedi.");
-  if (typeof result.secure_url !== "string") throw new Error("Cloudinary görsel adresi dönmedi.");
-  return result.secure_url;
+async function uploadImage(file: File, category: "vehicles" | "blog" | "ads", user: User): Promise<string> {
+  return uploadImageToR2(file, category, user);
 }
 
 function normalizeAd(item: Partial<AdminAd> & { id: string }): AdminAd {
@@ -296,7 +280,7 @@ export default function AdminPage() {
     setUploading(true);
     setErrorMessage("");
     try {
-      return await uploadImage(file, category, await user.getIdToken());
+      return await uploadImage(file, category, user);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Görsel yüklenemedi.");
       return null;
@@ -335,8 +319,7 @@ export default function AdminPage() {
     setUploading(true);
     setErrorMessage("");
     try {
-      const token = await user.getIdToken();
-      const uploaded = await Promise.all(Array.from(files).map((file) => uploadImage(file, "vehicles", token)));
+      const uploaded = await Promise.all(Array.from(files).map((file) => uploadImage(file, "vehicles", user)));
       setVehicle((current) => current ? { ...current, imageUrls: [...current.imageUrls, ...uploaded].slice(0, 20) } : current);
       setSuccessMessage(`${uploaded.length} görsel yüklendi.`);
     } catch (error) {

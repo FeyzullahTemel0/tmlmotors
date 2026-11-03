@@ -1,6 +1,6 @@
 ﻿# TML MOTORS
 
-TML MOTORS için Next.js App Router uygulaması. İşletme Gaziantep Günsev Oto AVM'de faaliyet gösterir; araç alım ve satım danışmanlığı sunar. Üretim hedefi Vercel, veritabanı Firebase/Firestore, görsel depolama Cloudinary'dir.
+TML MOTORS için Next.js App Router uygulaması. İşletme Gaziantep Günsev Oto AVM'de faaliyet gösterir; araç alım ve satım danışmanlığı sunar. Üretim hedefi Vercel, veritabanı Firebase/Firestore, görsel depolama Cloudflare R2'dir.
 
 ## Yerel geliştirme ve kontroller
 
@@ -20,8 +20,8 @@ npm run build
 - `/admin`: yalnızca `ADMIN_EMAILS` allowlist'indeki doğrulanmış Firebase hesabına açık; araç ekleme/düzenleme/yayınlama/satış durumu, blog yönetimi, sponsor alanları ve sosyal bağlantılar.
 - TML MOTORS tarafından yayımlanan blog paylaşımlarında üyeler beğeni ve kaydetme yapabilir; paylaşım bağlantısını paylaşabilir.
 - Beğeni/kaydetme sayıları herkese açık; etkileşimde bulunan üye bilgileri ve okunmamış bildirimler yalnızca yönetici panelinde görünür. Bildirimler panel açıkken 30 saniyede bir yenilenir.
-- `/giris` ve `/profil`: Firebase Authentication, e-posta doğrulaması, kullanıcı profili, Cloudinary profil fotoğrafı ve kaydedilen blog yazıları.
-- Cloudinary doğrudan yükleme için sunucuda imza oluşturur; API anahtarı dışında gizli değerler hiçbir zaman tarayıcıya verilmez.
+- `/giris` ve `/profil`: Firebase Authentication, e-posta doğrulaması, kullanıcı profili, R2 profil fotoğrafı ve kaydedilen blog yazıları.
+- Görseller yalnızca R2'ye, yetki kontrolünden sonra kısa ömürlü imzalı bağlantılarla yüklenir; R2 gizli anahtarları tarayıcıya verilmez.
 - `robots.txt` ve `sitemap.xml` üretimi; `NEXT_PUBLIC_SITE_URL` tanımlandığında tam site adresi.
 
 ## Firebase kurulumu
@@ -31,9 +31,13 @@ npm run build
 3. Firestore veritabanını oluşturup `firestore.rules` içeriğini deploy edin. Yönetim API'leri Admin SDK kullanır ve tüm yazma işlemlerinde Firebase ID token ile doğrulanmış allowlist kontrolü yapar.
 4. Firebase Admin service account JSON'ını `FIREBASE_SERVICE_ACCOUNT_JSON` olarak Vercel'de **server-only** bir değişkene ekleyin. JSON'u kaynak koda veya `NEXT_PUBLIC_` değişkenine koymayın.
 
-## Cloudinary kurulumu
+## Cloudflare R2 kurulumu
 
-Cloudinary hesap bilgilerindeki cloud name ve API key'i `NEXT_PUBLIC_` değişkenlerine girin; API secret yalnızca `CLOUDINARY_API_SECRET` server değişkeninde tutulmalıdır. Görseller imzalı yükleme API'si üzerinden `tml-motors/` klasörlerine kaydedilir.
+1. R2 bucket `tmlmotors` için yalnızca bu bucket'a erişebilen bir S3 API anahtarı oluşturun.
+2. Vercel ortam değişkenlerine `R2_ACCESS_KEY_ID` ve `R2_SECRET_ACCESS_KEY` ekleyin. Gizli anahtarı `NEXT_PUBLIC_` değişkenine koymayın veya kaynak koda eklemeyin.
+3. `R2_ACCOUNT_ID`, `R2_BUCKET_NAME` ve `R2_PUBLIC_BASE_URL` değerlerini `.env.example` dosyasındaki gibi ayarlayın. Public Development URL yalnızca bucket ayarlarında etkinse çalışır; canlı kullanımda özel bir R2 alan adı tercih edin.
+4. R2 bucket CORS ayarına sitenin gerçek origin'lerini ekleyin (yerel geliştirme için `http://localhost:3000`, canlıda Vercel/site alan adı). İzin verilen yöntemler `GET`, `HEAD`, `PUT`; izin verilen başlık `Content-Type` olmalıdır.
+5. Firebase token'ı doğrulanmış admin araç/blog/reklam görselleri; oturum sahibi profil fotoğrafı; etkin galerici ise kendi işletme görsellerini yükleyebilir.
 
 ## Gerekli ortam değişkenleri
 
@@ -42,7 +46,8 @@ Değerleri dağıtım öncesinde `.env.example` dosyasına göre tamamlayın. `.
 - `NEXT_PUBLIC_SITE_URL`
 - `NEXT_PUBLIC_FIREBASE_API_KEY`, `NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN`, `NEXT_PUBLIC_FIREBASE_PROJECT_ID`, `NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET`, `NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID`, `NEXT_PUBLIC_FIREBASE_APP_ID`
 - `ADMIN_EMAILS`, `FIREBASE_SERVICE_ACCOUNT_JSON`
-- `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `NEXT_PUBLIC_CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET`
+- `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY` (server-only)
+- `R2_ACCOUNT_ID`, `R2_BUCKET_NAME`, `R2_PUBLIC_BASE_URL`
 
 ## Firestore koleksiyonları
 
@@ -59,4 +64,4 @@ Araç şemasındaki boya/değişen bilgileri işletme beyanı olarak gösterilir
 
 ## Canlıya alma
 
-Önce Firebase Authentication, Firestore, Security Rules ve Cloudinary'yi yapılandırın; ardından aynı ortam değişkenlerini Vercel project settings içine ekleyip deploy edin. Admin oturumu için allowlist adresiyle oturum açıp e-posta doğrulamasını tamamlayın. Firebase/Cloudinary sırları eklenmeden önce yönetim, kullanıcı profili ve görsel yükleme özellikleri çalışmaz.
+Önce Firebase Authentication, Firestore, Security Rules ve Cloudflare R2'yi yapılandırın; ardından aynı ortam değişkenlerini Vercel project settings içine ekleyip deploy edin. Admin oturumu için allowlist adresiyle oturum açıp e-posta doğrulamasını tamamlayın. Firebase/R2 sırları eklenmeden önce yönetim, kullanıcı profili ve görsel yükleme özellikleri çalışmaz.
